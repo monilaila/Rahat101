@@ -1,10 +1,9 @@
-# 📀r
+# dfgfd
 
 A static website exported from Rahat Site Builder. No server, no build step — every `.html` file in this folder is complete and self-contained; open one directly in a browser or host the whole folder as-is.
 
 ## Pages
 - `index.html` — Home
-- `custom/loom/loom pattern 8 (7).html` — loom (custom-coded page, no nav/theme)
 
 ## Hosting on GitHub Pages
 This is a plain static site, so GitHub Pages works with no extra setup: commit this folder to a repo, enable Pages in the repo's Settings → Pages, and point it at the branch/folder containing these files. There is no build/CI step required.

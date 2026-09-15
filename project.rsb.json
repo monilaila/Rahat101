@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789473977257,
-  "lastSaved": 1789474173440,
+  "lastSaved": 1789474893339,
   "theme": {
     "id": "e056981c-2d91-4af3-8695-f72225f00d50",
     "type": "theme",
@@ -72,7 +72,7 @@
           "version": 1,
           "heroType": "default",
           "bigLines": [
-            "Hi I'm",
+            "1Hi I'm",
             "RAHAT"
           ],
           "centerText": "Hi, I am Rahat",
@@ -94,8 +94,8 @@
           "id": "d2efadf0-3a95-4979-8d87-d41efd34e02c",
           "type": "split_image",
           "version": 1,
-          "imgBefore": "images/img-91ff452072855d26.png",
-          "imgAfter": "images/img-51f7213f3595fe65.png",
+          "imgBefore": "images/img-b3e0192f3656cc19.jpg",
+          "imgAfter": "images/img-e51e7d9279fce496.webp",
           "alt": "",
           "aspectRatio": "landscape",
           "sizeScale": 100,
@@ -177,7 +177,7 @@
           "id": "178a3350-57d1-44d3-99d4-4cc390ed06e9",
           "type": "image_block",
           "version": 1,
-          "img": "images/img-3e0f8a548986b21a.png",
+          "img": "images/img-b3e0192f3656cc19.jpg",
           "alt": "",
           "aspectRatio": "landscape",
           "sizeScale": 100

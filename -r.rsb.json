@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789419635481,
-  "lastSaved": 1789457755929,
+  "lastSaved": 1789458288749,
   "theme": {
     "id": "2d4f6e38-51d9-4529-b1ab-3ad6f40c86f1",
     "type": "theme",
@@ -35,7 +35,10 @@
     "bgInterval": 30,
     "fishVisible": true,
     "fishCount": 25,
-    "fishImages": [],
+    "fishImages": [
+      "fishImage/481674122653520882.jpg",
+      "fishImage/Terminus v2 _ r_cassettefuturism.jpg"
+    ],
     "fishSize": 33,
     "fishSpeed": 0.03,
     "fishIconSvg": null,
@@ -405,7 +408,7 @@
     "owner": "monilaila",
     "repo": "Rahat101",
     "branch": "main",
-    "lastSyncStatus": "error",
-    "syncedAt": 1789458006363
+    "lastSyncStatus": "success",
+    "syncedAt": 1789458252390
   }
 }

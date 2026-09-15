@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789473977257,
-  "lastSaved": 1789474893339,
+  "lastSaved": 1789475808025,
   "theme": {
     "id": "e056981c-2d91-4af3-8695-f72225f00d50",
     "type": "theme",
@@ -72,7 +72,7 @@
           "version": 1,
           "heroType": "default",
           "bigLines": [
-            "1Hi I'm",
+            "2Hi I'm",
             "RAHAT"
           ],
           "centerText": "Hi, I am Rahat",
@@ -91,6 +91,15 @@
           "overlayBlur": 10
         },
         {
+          "id": "cc6e6d83-9ded-4e30-8df9-8a381d69198f",
+          "type": "image_block",
+          "version": 1,
+          "img": "images/img-3e0f8a548986b21a.png",
+          "alt": "",
+          "aspectRatio": "landscape",
+          "sizeScale": 100
+        },
+        {
           "id": "d2efadf0-3a95-4979-8d87-d41efd34e02c",
           "type": "split_image",
           "version": 1,
@@ -100,12 +109,6 @@
           "aspectRatio": "landscape",
           "sizeScale": 100,
           "orientation": "horizontal"
-        },
-        {
-          "id": "9ef1baf0-ff69-4e71-927d-e8be9a18217a",
-          "type": "divider",
-          "version": 1,
-          "dividerStyle": "line"
         },
         {
           "id": "476db151-d3a9-4ba9-bec5-8269455a51e6",
@@ -142,6 +145,12 @@
               "link": "#"
             }
           ]
+        },
+        {
+          "id": "9ef1baf0-ff69-4e71-927d-e8be9a18217a",
+          "type": "divider",
+          "version": 1,
+          "dividerStyle": "line"
         },
         {
           "id": "f5d3f2dd-0c5d-4ef4-981e-7cdb74bd7e82",
@@ -194,6 +203,8 @@
   "github": {
     "owner": "monilaila",
     "repo": "Rahat101",
-    "branch": "main"
+    "branch": "main",
+    "lastSyncStatus": "success",
+    "syncedAt": 1789474913723
   }
 }

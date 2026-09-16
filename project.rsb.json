@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789473977257,
-  "lastSaved": 1789539509273,
+  "lastSaved": 1789539666224,
   "theme": {
     "id": "e056981c-2d91-4af3-8695-f72225f00d50",
     "type": "theme",
@@ -72,7 +72,7 @@
           "version": 1,
           "heroType": "default",
           "bigLines": [
-            "4Hi I'm",
+            "5Hi I'm",
             "RAHAT"
           ],
           "centerText": "Hi, I am Rahat",
@@ -221,7 +221,7 @@
               "openNewTab": true
             },
             {
-              "img": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmMDkzZmIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmNTU3NmMiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0idXJsKCNnKSIvPjwvc3ZnPg==",
+              "img": "images/img-9c844d469dc1b183.jpg",
               "title": "Project Two",
               "desc": "A short description of this project — what it is and what makes it interesting.",
               "linkUrl": "",
@@ -267,6 +267,6 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1789539268285
+    "syncedAt": 1789539546852
   }
 }

@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fish Tank — Behavior States (Smooth Transitions)</title>
+<style>
+  :root{
+    --page-bg: #eef1f5;
+    --card-bg: #ffffff;
+    --ink: #1f2733;
+    --ink-soft: #5b6776;
+    --accent: #2f7fd6;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin: 0;
+    min-height: 100vh;
+    background: var(--page-bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 48px;
+  }
+
+  .stage{
+    width: min(100%, 971px);
+    aspect-ratio: 971 / 532;
+    background: #f0ede8;
+    border-radius: 14px;
+    box-shadow: 0 18px 40px -18px rgba(20,40,70,0.35);
+    overflow: hidden;
+  }
+  .stage svg{ width: 100%; height: 100%; display: block; }
+
+  .controls{
+    width: min(100%, 971px);
+    margin-top: 18px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 6px 20px -12px rgba(20,40,70,0.25);
+  }
+
+  button.state-btn{
+    border: 1.5px solid #d8dde3;
+    background: #fff;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  button.state-btn:hover{ border-color: var(--accent); }
+  button.state-btn:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.feed-btn{
+    border: 1.5px solid #d8dde3;
+    background: #fff;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  button.feed-btn:hover{ border-color: var(--accent); }
+  button.feed-btn:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.feed-btn.is-active{
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  button.state-btn.is-active{
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  #statusLabel{
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <svg viewBox="0 0 971 532" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- tank -->
+      <path id="waterLine" d="M73.043 49.9004H899.847" stroke="black" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M958.404 24.8496V476.801H12.8477V24.8496" stroke="black" stroke-width="2.87702" stroke-miterlimit="10"/>
+
+      <!-- water body: filled wavy shape from the surface down to the tank floor.
+           This IS the visible water — blue when clean, shifting to yellowish-green
+           as cloudiness increases. Its top edge is animated with the same wave
+           controls as the black waterline but on a slightly different phase so
+           it has its own subtle independent ripple. Sits behind all other content. -->
+      <path id="waterBody" d="" fill="#4ab3e8" fill-opacity="0.28"/>
+
+      <!-- oxygen nozzle + bubble stream, right wall of the tank -->
+      <g id="nozzle">
+        <rect x="887" y="200" width="60" height="16" rx="6" fill="#232629"/>
+        <!-- <ellipse cx="887" cy="407" rx="6" ry="8" fill="#111417"/> -->
+      </g>
+      <g id="bubbles"></g>
+
+      <!-- food feeder: black rounded box mounted on the top-left rim,
+           drop point is bottom-center of the box -->
+      <rect id="feeder" x="42" y="10" width="36" height="26" rx="6" fill="#181a1c"/>
+      <g id="flakes"></g>
+
+      <!-- debug overlays: green = actual flake target, purple = fish's steering target -->
+      <!-- green cross = feed zone target. red box = fish pos. always visible when feeding -->
+      <circle id="dbgFood" r="6" fill="#22c55e" fill-opacity="0" stroke="#16a34a" stroke-width="1.5"/>
+      <circle id="dbgSteer" r="6" fill="#a855f7" fill-opacity="0" stroke="#7e22ce" stroke-width="1.5"/>
+      <!-- feed zone crosshair: vertical + horizontal lines -->
+      <line id="dbgZoneV" x1="0" y1="0" x2="0" y2="0" stroke="#ff0" stroke-width="1.5" stroke-dasharray="4,3" opacity="0"/>
+      <line id="dbgZoneH" x1="0" y1="0" x2="0" y2="0" stroke="#ff0" stroke-width="1.5" stroke-dasharray="4,3" opacity="0"/>
+      <!-- fish position box -->
+      <rect id="dbgFishBox" x="0" y="0" width="70" height="50" fill="none" stroke="#f00" stroke-width="1.5" stroke-dasharray="4,3" opacity="0"/>
+
+      <!-- algae layer: glass-stuck circles on left wall, right wall, and floor.
+           Rendered behind the fish so the fish swims in front of the algae.
+           Populated entirely by JS — this group is just the container. -->
+      <g id="algae"></g>
+
+      <!-- fish hierarchy, outer to inner:
+           fishPosition  -> world x/y (steering + gasp bob)
+           fishRoot      -> whole-body sway + rest tilt (sideways when dead)
+           fishArt       -> left/right facing flip, anchored at the fish's own center
+           tailGroup     -> tail-only flick, layered on top of everything above -->
+      <g id="fishPosition" transform="translate(400, 220)">
+        <g id="fishRoot" transform="rotate(0 60 35)">
+          <g id="fishArt" transform="translate(0 0) scale(1 1)">
+            <g id="tailGroup" transform="rotate(5 33 31.85)">
+              <path d="M20.5451 31.9594C10.5745 28.5193 7.46475 24.7991 5.06035 15.8933C16.4903 14.7686 22.6079 17.1294 32.4392 31.9594C23.1569 45.0541 17.3535 49.6455 4.83594 48.0255C7.36152 39.3319 10.4607 35.5994 20.5451 31.9594Z" fill="#E04660"/>
+            </g>
+            <path d="M94.3783 32.1483C94.3783 37.9709 77.6036 51.8805 59.8579 51.8805C42.1123 51.8805 27.7266 40.2352 27.7266 32.1483C27.7266 24.0613 42.6575 12.416 59.8579 12.416C77.6036 12.416 94.3783 25.5708 94.3783 32.1483Z" fill="#E04660"/>
+          </g>
+        </g>
+      </g>
+
+    </svg>
+  </div>
+
+  <div class="controls">
+    <button class="state-btn is-active" data-state="healthy" type="button">Healthy</button>
+    <button class="state-btn" data-state="sick" type="button">Sick</button>
+    <button class="state-btn" data-state="low_oxygen" type="button">Low Oxygen</button>
+    <button class="state-btn" data-state="dead" type="button">Dead (float)</button>
+
+    <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);">
+      Water height
+      <input type="range" id="waterSlider" min="45" max="420" step="1" value="50">
+    </label>
+
+    <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);">
+      Wave height
+      <input type="range" id="waveHeightSlider" min="0" max="15" step="0.5" value="4">
+    </label>
+
+    <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);">
+      Wave speed
+      <input type="range" id="waveSpeedSlider" min="0" max="5" step="0.1" value="1.2">
+    </label>
+
+    <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);">
+      Bubble rate
+      <input type="range" id="bubbleRateSlider" min="0" max="20" step="1" value="6">
+    </label>
+
+    <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);">
+      Feed amount
+      <input type="range" id="feedAmountSlider" min="1" max="15" step="1" value="5">
+    </label>
+    <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);">
+      Algae amount
+      <input type="range" id="algaeSlider" min="0" max="100" step="1" value="0">
+    </label>
+    <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);">
+      Cloudiness
+      <input type="range" id="cloudinessSlider" min="0" max="100" step="1" value="0">
+    </label>
+    <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);">
+      Appetite
+      <input type="range" id="appetiteSlider" min="0" max="5" step="0.1" value="1">
+    </label>
+<button class="feed-btn" id="feedBtn" type="button">Feed</button>
+    <button class="feed-btn" id="feedFishBtn" type="button">Feed Fish</button>
+
+    <span id="statusLabel">Easing toward: Healthy</span>
+  </div>
+
+<script>
+(function(){
+
+  /* ============================================================
+     STATES
+     Every one of these uses the SAME steering system below —
+     "dead" is just extremely weak swimming toward a near-surface
+     zone, not a special case. That's what guarantees every
+     transition (in any order, any combination) behaves the same way.
+
+       swimSpeed / turnRate   -> steering toward the wander zone
+       tailAmp / swayAmp       -> oscillation strength
+       restTilt                -> baseline body tilt (0 upright,
+                                   90 = floating on its side)
+       speedMul                 -> liveliness of tail/body oscillation
+       gaspAmp                  -> vertical "gasping for air" bob amplitude
+       transitionDuration        -> SECONDS to fully ease into this state
+                                    (fixed-duration smoothstep, not decay —
+                                    this is what makes the change actually
+                                    visible/gradual instead of front-loaded)
+       gulp                       -> occasional single air-gulp twitch (sick only)
+     ============================================================ */
+  const STATES = {
+    healthy:    { swimSpeed: 75, turnRate: 150, tailAmp: 11,  swayAmp: 9,   restTilt: 0,  speedMul: 1,    gaspAmp: 0, transitionDuration: 3.0, gulp: false },
+    sick:       { swimSpeed: 24, turnRate: 55,  tailAmp: 3.5, swayAmp: 3.5, restTilt: 0,  speedMul: 0.45, gaspAmp: 0, transitionDuration: 3.5, gulp: true  },
+    low_oxygen: { swimSpeed: 58, turnRate: 108, tailAmp: 5,   swayAmp: 4,   restTilt: -90, speedMul: 0.6,  gaspAmp: 4, transitionDuration: 3.0, gulp: false },
+    dead:       { swimSpeed: 0,  turnRate: 0,   tailAmp: 0,   swayAmp: 0,   restTilt: 95, speedMul: 0,    gaspAmp: 0, transitionDuration: 4.0, gulp: false }
+  };
+
+  /* Wander zones are computed fresh every frame from the live water height,
+     so every state (and the smooth transition between any two states)
+     automatically tracks wherever the slider currently has the surface. */
+  const TANK_BOTTOM_Y = 476.8;               // fixed glass floor
+  const WATER_Y_MIN = 45, WATER_Y_MAX = 420; // slider range (surface position)
+
+  function zoneBoundsFor(name, waterY){
+    const columnHeight = TANK_BOTTOM_Y - waterY;
+    switch(name){
+      case 'healthy':    return { yMin: waterY + columnHeight * 0.28, yMax: waterY + columnHeight * 0.62, arrive: 25, wanderChangeProb: 0.18 };
+      case 'sick':       return { yMin: waterY + 8,                   yMax: waterY + Math.min(40, columnHeight * 0.4), arrive: 30, wanderChangeProb: 0.06 };
+      case 'low_oxygen': return { yMin: waterY - 40,                  yMax: waterY - 26, arrive: 18, wanderChangeProb: 0.04 };
+      case 'dead':       return { yMin: waterY - 4,                   yMax: waterY + 12, arrive: 40, wanderChangeProb: 0.02 };
+    }
+  }
+  const SWIM_X_MIN = -20, SWIM_X_MAX = 900; // left: allow near edge; right: stay inside
+  const PARAM_KEYS = ['swimSpeed','turnRate','tailAmp','swayAmp','restTilt','speedMul','gaspAmp'];
+
+  const CENTER_X    = 49.6;          // flip-anchor: bbox center of body+tail
+  const SWAY_PIVOT  = { x: 60, y: 35 };
+  const TAIL_PIVOT  = { x: 33, y: 31.85 };
+  const SWAY_BASE_FREQ = 2 * Math.PI / 2.2;  // body sway period at full speedMul
+  const TAIL_BASE_FREQ = 2 * Math.PI / 0.9;  // tail beats faster than the body sways
+  const GASP_FREQ       = 2 * Math.PI / 0.7;  // gasping rhythm, independent of speedMul
+  const fishPosition = document.getElementById('fishPosition');
+  const fishRoot      = document.getElementById('fishRoot');
+  const fishArt        = document.getElementById('fishArt');
+  const tailGroup        = document.getElementById('tailGroup');
+  const statusLabel       = document.getElementById('statusLabel');
+  const buttons             = document.querySelectorAll('.state-btn');
+  const waterSlider          = document.getElementById('waterSlider');
+  const waterLinePath         = document.getElementById('waterLine');
+  const bubblesGroup          = document.getElementById('bubbles');
+  const nozzleEl               = document.getElementById('nozzle');
+  const flakesGroup            = document.getElementById('flakes');
+  const feedAmountSlider       = document.getElementById('feedAmountSlider');
+  const feedBtn                = document.getElementById('feedBtn');
+  const feedFishBtn            = document.getElementById('feedFishBtn');
+  const dbgFood    = document.getElementById('dbgFood');
+  const dbgSteer   = document.getElementById('dbgSteer');
+  const dbgZoneV   = document.getElementById('dbgZoneV');
+  const dbgZoneH   = document.getElementById('dbgZoneH');
+  const dbgFishBox = document.getElementById('dbgFishBox');
+  const FEEDER_DROP_Y = 36; // bottom-center of feeder box (y is fixed)
+  const FIXED_FEEDER_X = 80;  // fixed feeder center x — close to left wall
+  function getFeederX(){ return FIXED_FEEDER_X; }
+  const bubbleRateSlider      = document.getElementById('bubbleRateSlider');
+  const NOZZLE_X = 887, NOZZLE_Y = 200; // tip of nozzle opening, SVG coords
+
+  let stateName = 'healthy';
+  let cur    = Object.assign({}, STATES.healthy);
+  let target = STATES.healthy;
+
+  // Fixed-duration smoothstep transition: snapshot where we currently ARE
+  // the instant a new state is requested, then ease from that snapshot to
+  // the target over `duration` seconds. Re-triggering mid-transition just
+  // takes a fresh snapshot, so it's always continuous.
+  let transitionStart = Object.assign({}, cur);
+  let transitionElapsed = 0;
+  let transitionDuration = STATES.healthy.transitionDuration;
+
+  function smoothstep(t){ return t * t * (3 - 2 * t); }
+
+  let pos = { x: 400, y: 220 };
+  let heading = 0;
+  let prevHeading = 0;
+  let facing = 1;
+  let lastSwayAngle = 0;
+
+  // The wander zone itself migrates smoothly between states (using the same
+  // transition curve as everything else) — this is what stops the fish from
+  // teleporting its target band from e.g. mid-tank straight to the surface.
+  // Storing NAMES (not bounds) means the live water height is re-applied
+  // every frame, even after a transition has already finished.
+  let zoneStartName  = 'healthy';
+  let zoneTargetName = 'healthy';
+  let curZone         = zoneBoundsFor('healthy', parseFloat(waterSlider.value));
+  let waypoint        = pickWaypointInZone(curZone);
+
+  let swayPhase = 0;
+  let tailPhase = 0;
+  let gaspPhase = 0;
+  let gulpTimer = randRange(4, 7);
+  let gulpPulse = 0;
+
+  let lastTime = performance.now();
+
+  function randRange(min, max){ return min + Math.random() * (max - min); }
+
+  /* ---- bubble stream: forward jet momentum, then curves upward (same
+     feel as the standalone nozzle demo, ported to SVG-circle rendering) ---- */
+  const MAX_BUBBLES = 24, DRAG_K = 0.9, BUOYANCY = 380;
+  const bubblePool = [], activeBubbles = [];
+  let bubbleAccum = 0;
+
+  function spawnBubble(){
+    if(activeBubbles.length >= MAX_BUBBLES) return;
+    const b = bubblePool.pop() || { el: document.createElementNS('http://www.w3.org/2000/svg','circle') };
+    b.r = randRange(3, 8);
+    b.x = NOZZLE_X + randRange(-2, 2);
+    b.y = NOZZLE_Y + randRange(-b.r * 0.4, b.r * 0.4);
+    const sizeF = 0.5 + (b.r / 8) * 0.5;
+    b.vx = randRange(-210, -140) * sizeF;   // leftward jet
+    b.vy = randRange(-8, 8);                // near-flat exit
+    b.age = 0;
+    b.el.setAttribute('fill', '#bfe9ff');
+    b.el.setAttribute('fill-opacity', '0.8');
+    bubblesGroup.appendChild(b.el);
+    activeBubbles.push(b);
+  }
+
+  function tickBubble(b, dt, waterY){
+    const spdSq = b.vx*b.vx + b.vy*b.vy;
+    if(spdSq > 0.25){
+      const f = Math.max(0, 1 - DRAG_K * dt);
+      b.vx *= f; b.vy *= f;
+    }
+    const buoyRamp = Math.min(b.age / 0.25, 1);
+    b.vy -= BUOYANCY * (0.45 + (b.r/8)*0.55) * buoyRamp * dt;
+    b.x += b.vx * dt; b.y += b.vy * dt; b.age += dt;
+
+    // fade out as it nears the live water surface, so it never appears
+    // to poke out of the water
+    const fadeBand = 14;
+    let opacity = Math.min(b.age / 0.15, 1) * 0.8;
+    if(b.y < waterY + fadeBand) opacity *= Math.max(0, (b.y - waterY) / fadeBand);
+    if(b.y <= waterY || opacity <= 0.01 || b.x < 70) return false;
+
+    b.el.setAttribute('cx', b.x.toFixed(1));
+    b.el.setAttribute('cy', b.y.toFixed(1));
+    b.el.setAttribute('r', b.r.toFixed(1));
+    b.el.setAttribute('fill-opacity', opacity.toFixed(2));
+    return true;
+  }
+
+  /* ---- food flakes: fall from feeder, settle near surface, drift with
+     wave lag, each has its own ~3min life and fades out at the end ---- */
+  const flakePool = [], activeFlakes = [];
+
+  function spawnFlake(){
+    const f = flakePool.pop() || { el: document.createElementNS('http://www.w3.org/2000/svg','circle') };
+    const FEEDER_DROP_X = getFeederX();
+    f.x = FEEDER_DROP_X + randRange(-6, 6);
+    f.y = FEEDER_DROP_Y + randRange(-2, 2);
+    f.vy = randRange(20, 40);          // initial fall speed
+    f.vx = randRange(-12, 12);         // gentle spread so flakes stay near feeder zone
+    f.r = randRange(3, 4.5);
+    f.floating = false;                // becomes true once it settles near surface
+    f.restY = 0;                       // depth below live waterY once floating
+    f.driftX = randRange(-3, 3);       // slow horizontal drift while floating
+    f.bobPhase = randRange(0, Math.PI * 2);
+    f.bobFreq = randRange(0.8, 1.4);
+    f.life = 0;
+    f.removeAt = randRange(120, 180);  // random instant within 2:00-3:00 window
+    f.el.setAttribute('fill', '#caa24a');
+    f.el.setAttribute('fill-opacity', '0.95');
+    flakesGroup.appendChild(f.el);
+    activeFlakes.push(f);
+  }
+
+  function tickFlake(f, dt, waterY){
+    f.life += dt;
+    if(f.life >= f.removeAt) return false;   // instant removal, no fade
+
+    if(!f.floating){
+      f.vy += 60 * dt;           // gentle gravity while sinking
+      f.vx *= Math.exp(-2.5 * dt);
+      f.x += f.vx * dt;
+      if(f.x < 20){ f.x = 20; f.vx = Math.abs(f.vx); }
+      if(f.x > 950){ f.x = 950; f.vx = -Math.abs(f.vx); }
+      f.y += f.vy * dt;
+      if(f.y >= waterY + 6){     // settled just under the surface
+        f.floating = true;
+        f.restY = f.y - waterY;  // keep floating at this depth relative to live surface
+      }
+    } else {
+      // Separation: push this flake away from any neighbour that is too close,
+      // so flakes spread out and don't pile up on top of each other.
+      // FLAKE_MIN_DIST is the personal-space radius (diameter of a large flake).
+      const FLAKE_MIN_DIST = 10;
+      for(const g of activeFlakes){
+        if(g === f) continue;
+        const ex = f.x - g.x, ey = f.y - g.y;
+        const dist = Math.hypot(ex, ey);
+        if(dist > 0 && dist < FLAKE_MIN_DIST){
+          // nudge this flake away proportional to how much it overlaps
+          const push = (FLAKE_MIN_DIST - dist) / FLAKE_MIN_DIST * 18 * dt;
+          f.x += (ex / dist) * push;
+        }
+      }
+      f.x += f.driftX * dt;
+      if(f.x < 20){ f.x = 20; f.driftX = Math.abs(f.driftX); }
+      if(f.x > 950){ f.x = 950; f.driftX = -Math.abs(f.driftX); }
+      const bob = Math.sin(f.life * f.bobFreq + f.bobPhase) * 1.6;
+      f.y += ((waterY + f.restY + bob) - f.y) * Math.min(dt * 2, 1); // soft lag toward target
+    }
+
+    f.el.setAttribute('cx', f.x.toFixed(1));
+    f.el.setAttribute('cy', f.y.toFixed(1));
+    f.el.setAttribute('r', f.r.toFixed(1));
+    return true;
+  }
+
+  feedBtn.addEventListener('click', () => {
+    const n = parseInt(feedAmountSlider.value, 10);
+    for(let i = 0; i < n; i++) spawnFlake();
+  });
+
+  // ---- "Feed Fish" animation: fish breaks from wandering, swims to the
+  // nearest flake using its current state's normal swimSpeed/turnRate (so
+  // sick = slow, healthy = normal automatically), then nibbles in place
+  // for a moment before resuming regular wander behavior. ----
+  let feeding = false, eating = false, eatTimer = 0, feedTarget = null, feedLockedFacing = 1;
+  let eatTiltLocked = 0; // tilt angle frozen at the instant of arrival — never recomputed during eating, so it can't feed back into itself
+  let eatTiltFrom = 0;   // swayAngle snapshot at arrival — ease starts here so there is no jump
+  const EAT_DURATION = 40; // seconds of nibble gesture once arrived
+  const FEED_ARRIVE  = 60; // arrive threshold — generous so fish eats even when wall-clamped near edges
+  const EAT_RADIUS   = 25; // px radius around mouth — only flakes within this are eaten
+  const appetiteSlider = document.getElementById('appetiteSlider');
+  let eatConsumeAccum = 0; // fractional accumulator so appetite rate is frame-rate independent
+
+  // Finds the flake sitting in the densest local cluster (most neighbors
+  // within CLUSTER_RADIUS), then returns whichever actual flake is closest
+  // to that cluster's centroid — so the target is "where most of the food
+  // is," not just whichever single flake happens to be nearest the fish.
+  const CLUSTER_RADIUS = 40;
+
+  function densestClusterFlake(){
+    if(activeFlakes.length === 0) return null;
+    let bestCount = -1, bestCx = 0, bestCy = 0;
+    for(const f of activeFlakes){
+      let count = 0, sx = 0, sy = 0;
+      for(const g of activeFlakes){
+        if(Math.hypot(g.x - f.x, g.y - f.y) <= CLUSTER_RADIUS){ count++; sx += g.x; sy += g.y; }
+      }
+      if(count > bestCount){ bestCount = count; bestCx = sx / count; bestCy = sy / count; }
+    }
+    let target = null, bestD = Infinity;
+    for(const f of activeFlakes){
+      const d = Math.hypot(f.x - bestCx, f.y - bestCy);
+      if(d < bestD){ bestD = d; target = f; }
+    }
+    return target;
+  }
+
+  feedFishBtn.addEventListener('click', () => {
+    if(stateName === 'dead' || stateName === 'low_oxygen') return;
+    const t = densestClusterFlake();
+    if(!t) return;
+    if(feedTarget && Math.hypot(t.x - feedTarget.x, t.y - feedTarget.y) < CLUSTER_RADIUS && (feeding || eating)){
+      // Already engaged with this same spot — resetting eating/feeding here
+      // would flip false then instantly true again next frame (fish is
+      // already at the arrival point), which is visually a no-op. Just
+      // extend the nibble instead. Compared by distance, not object
+      // identity, since the cluster scan can return a different-but-
+      // equivalent flake from the same cluster on each click.
+      eatTimer = 0;
+      feedFishBtn.classList.add('is-active');
+      return;
+    }
+    feedTarget = t;
+    feeding = true;
+    eating = false;
+    eatTimer = 0;
+    feedLockedFacing = pos.x < getFeederX() ? 1 : -1; // face toward food
+    feedFishBtn.classList.add('is-active');
+  });
+
+
+  const waveHeightSlider = document.getElementById('waveHeightSlider');
+  const waveSpeedSlider  = document.getElementById('waveSpeedSlider');
+  let wavePhase = 0; // increments forever — a sine is naturally seamless/looping, no reset needed
+
+  function buildWaterPath(waterY, amplitude, phase){
+    const xStart = 73.043, xEnd = 899.847, segments = 36, wavelength = 70;
+    let d = '';
+    for(let i = 0; i <= segments; i++){
+      const x = xStart + (xEnd - xStart) * (i / segments);
+      const y = waterY + Math.sin(x / wavelength + phase) * amplitude;
+      d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
+    }
+    return d;
+  }
+
+  function pickWaypointInZone(zone){
+    return { x: randRange(SWIM_X_MIN, SWIM_X_MAX), y: randRange(zone.yMin, zone.yMax) };
+  }
+
+  function normalizeAngle(a){
+    while(a > Math.PI) a -= 2 * Math.PI;
+    while(a < -Math.PI) a += 2 * Math.PI;
+    return a;
+  }
+
+  function setState(name){
+    zoneStartName = stateName; // wherever it currently belongs, water-height-aware
+    stateName = name;
+    target = STATES[name];
+    transitionStart = Object.assign({}, cur);
+    transitionElapsed = 0;
+    transitionDuration = target.transitionDuration;
+    zoneTargetName = name;
+    statusLabel.textContent = 'Easing toward: ' + name.replace('_',' ').replace(/\b\w/g, c => c.toUpperCase());
+    buttons.forEach(b => b.classList.toggle('is-active', b.dataset.state === name));
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => setState(btn.dataset.state));
+  });
+
+  function tick(now){
+    const dt = Math.min((now - lastTime) / 1000, 0.1);
+    lastTime = now;
+
+    // ---- Fixed-duration smoothstep ease toward the target params ----
+    transitionElapsed += dt;
+    const rawT = Math.min(transitionElapsed / transitionDuration, 1);
+    const t = smoothstep(rawT);
+    PARAM_KEYS.forEach(key => {
+      cur[key] = transitionStart[key] + (target[key] - transitionStart[key]) * t;
+    });
+
+    // Live water height — the waterline visual and every zone's bounds are
+    // recomputed from this every frame, so dragging the slider re-centers
+    // whichever state the fish is currently in (or transitioning between).
+    const waterY = parseFloat(waterSlider.value);
+    wavePhase += parseFloat(waveSpeedSlider.value) * dt;
+    waterLinePath.setAttribute('d', buildWaterPath(waterY, parseFloat(waveHeightSlider.value), wavePhase));
+
+    // Water body: same wave params as the surface line but with a fixed phase
+    // offset (1.1 radians) so it ripples independently rather than in lockstep.
+    // Cloudiness slider (0-100) drives both color and opacity:
+    //   0   = clear blue,  low opacity  (water looks clean and light)
+    //   100 = murky yellowish-green, higher opacity (water looks dirty/cloudy)
+    if(window.updateWaterBody) window.updateWaterBody(waterY, parseFloat(waveHeightSlider.value), wavePhase);
+
+    // Update algae positions each frame so they track the live water surface
+    if(window.drawAlgae) window.drawAlgae(waterY);
+
+    // Nozzle only emits when it's actually underwater — if the surface
+    // drops below the nozzle's y, there's no water there to bubble through.
+    const nozzleSubmerged = waterY < NOZZLE_Y;
+    nozzleEl.setAttribute('opacity', nozzleSubmerged ? '1' : '0.45');
+    if(nozzleSubmerged){
+      bubbleAccum += parseFloat(bubbleRateSlider.value) * dt;
+      while(bubbleAccum >= 1){ spawnBubble(); bubbleAccum -= 1; }
+    }
+    for(let i = activeBubbles.length - 1; i >= 0; i--){
+      if(!tickBubble(activeBubbles[i], dt, waterY)){
+        activeBubbles[i].el.remove();
+        bubblePool.push(activeBubbles[i]);
+        activeBubbles.splice(i, 1);
+      }
+    }
+    for(let i = activeFlakes.length - 1; i >= 0; i--){
+      if(!tickFlake(activeFlakes[i], dt, waterY)){
+        activeFlakes[i].el.remove();
+        flakePool.push(activeFlakes[i]);
+        activeFlakes.splice(i, 1);
+      }
+    }
+
+    // The wander band migrates on the SAME curve — this is the actual fix for
+    // the "jumps to a new spot" issue. Early in a transition the fish is
+    // still mostly held to the old band; it only drifts toward the new one
+    // as both the band and its swim strength ease together.
+    const zFrom = zoneBoundsFor(zoneStartName, waterY);
+    const zTo   = zoneBoundsFor(zoneTargetName, waterY);
+    curZone.yMin = zFrom.yMin + (zTo.yMin - zFrom.yMin) * t;
+    curZone.yMax = zFrom.yMax + (zTo.yMax - zFrom.yMax) * t;
+    curZone.arrive = zTo.arrive;
+    curZone.wanderChangeProb = zTo.wanderChangeProb;
+
+    // ============================================================
+    // FEEDING STEERING — read this whole block before touching it.
+    //
+    // pos.x/pos.y is the SVG translate origin of <g id="fishPosition">,
+    // i.e. local (0,0) of the fish's own coordinate system. It is NOT
+    // the visual center of the fish body. The body <path> in fishArt
+    // spans local x:[27.7,94.4] y:[12.4,51.9], so its true center is
+    // local (61, 32) — measured directly from the path's bounding box,
+    // not guessed. That local point passes through:
+    //   1. fishArt mirror:  translate(CENTER_X*(1-facing),0) scale(facing,1)
+    //   2. fishRoot rotate: rotate(swayAngle, SWAY_PIVOT.x, SWAY_PIVOT.y)
+    //   3. fishPosition translate: translate(pos.x, pos.y)
+    // SWAY_PIVOT (60,35) sits almost exactly on the body center (61,32),
+    // so rotation barely moves that point — meaning a CONSTANT offset is
+    // a safe approximation across all tilt angles (verified numerically:
+    // offset stays within ~4px of (61,32) at any feeding rotation).
+    // The x-component must flip sign with facing (mirror); y does not.
+    // ============================================================
+    if(feeding){
+      // Only cancel on state change — not when flakes run out.
+      // Fish stays at feed zone for full EAT_DURATION regardless of flakes.
+      if(stateName === 'dead' || stateName === 'low_oxygen'){
+        feeding = false; eating = false;
+      }
+    }
+    const steerPoint = feeding ? feedTarget : waypoint; // feedTarget still used for eat-radius checks
+    // Offset anchored to the mouth tip (local 94.378, 32.148 — the body
+    // path's own start/end node). Unlike the body-center point, the mouth
+    // sits far from SWAY_PIVOT, so the eating tilt (up to ~90°) swings it
+    // well away from a flat (unrotated) estimate — that's what was pushing
+    // the mouth above the water surface. Rotate the mirrored local point by
+    // last frame's sway angle (one-frame lag, imperceptible) to track it
+    // accurately through the tilt.
+    const currentFeederX = getFeederX();
+
+    // Feed zone: fixed point directly under feeder, just below water surface.
+    const FEED_ZONE_X = currentFeederX - 70; // offset so fish CENTER lands on feeder
+    const FEED_ZONE_Y = waterY - 8;
+
+    // feedLockedFacing: which way fish faces when eating.
+    // Determined by feeder position relative to tank center — always correct,
+    // regardless of which side the fish approaches from.
+    // Face toward the food: if fish is to the left of food, face right (+1); if right of food, face left (-1)
+    if(feeding && !eating) feedLockedFacing = pos.x < currentFeederX ? 1 : -1;
+
+    let dx, dy;
+    if(eating){
+      dx = 0; dy = 0; // pos locked while eating — prevents drift/re-trigger
+    } else if(feeding){
+      dx = FEED_ZONE_X - pos.x;
+      dy = FEED_ZONE_Y - pos.y;
+    } else {
+      dx = steerPoint.x - pos.x;
+      dy = steerPoint.y - pos.y;
+    }
+
+    if(feeding){
+      // Yellow crosshair at feed zone target
+      dbgZoneV.setAttribute('x1', FEED_ZONE_X); dbgZoneV.setAttribute('y1', FEED_ZONE_Y - 20);
+      dbgZoneV.setAttribute('x2', FEED_ZONE_X); dbgZoneV.setAttribute('y2', FEED_ZONE_Y + 20);
+      dbgZoneH.setAttribute('x1', FEED_ZONE_X - 20); dbgZoneH.setAttribute('y1', FEED_ZONE_Y);
+      dbgZoneH.setAttribute('x2', FEED_ZONE_X + 20); dbgZoneH.setAttribute('y2', FEED_ZONE_Y);
+      dbgZoneV.setAttribute('opacity','1'); dbgZoneH.setAttribute('opacity','1');
+      // Red box around fish current pos
+      dbgFishBox.setAttribute('x', (pos.x - 35).toFixed(1));
+      dbgFishBox.setAttribute('y', (pos.y - 25).toFixed(1));
+      dbgFishBox.setAttribute('opacity','1');
+    } else {
+      dbgZoneV.setAttribute('opacity','0'); dbgZoneH.setAttribute('opacity','0');
+      dbgFishBox.setAttribute('opacity','0');
+    }
+    dbgFood.setAttribute('fill-opacity', '0');
+    dbgSteer.setAttribute('fill-opacity', '0');
+    const distToTarget = Math.hypot(dx, dy);
+
+    if(feeding && !eating){
+      // Arrival: check true distance to feed zone — fish must be close on both axes.
+      if(distToTarget < 30){
+        eating = true; eatTimer = 0; eatConsumeAccum = 0;
+        // Fixed gentle upward tilt — looks correct from any approach angle.
+        eatTiltLocked = -70 * feedLockedFacing;
+        eatTiltFrom = lastSwayAngle;
+      }
+    } else if(!feeding && (distToTarget < curZone.arrive || Math.random() < curZone.wanderChangeProb * dt)){
+      waypoint = pickWaypointInZone(curZone);
+    }
+
+    if(eating){
+      eatTimer += dt;
+      if(eatTimer >= EAT_DURATION){ feeding = false; eating = false; waypoint = pickWaypointInZone(curZone); }
+
+      // CONSUMPTION: appetite slider (0-5) = flakes eaten per second.
+      // One random flake removed per interval regardless of position —
+      // no proximity check. When all flakes gone, stop eating immediately.
+      const appetiteRate = parseFloat(appetiteSlider.value);
+      if(appetiteRate > 0){
+        eatConsumeAccum += appetiteRate * dt;
+        while(eatConsumeAccum >= 1.0){
+          if(activeFlakes.length > 0){
+            // Pick a random flake — remove it instantly from DOM and list
+            const idx = Math.floor(Math.random() * activeFlakes.length);
+            const f = activeFlakes[idx];
+            f.el.remove();
+            activeFlakes.splice(idx, 1);
+            flakePool.push(f);
+          } else {
+            // No flakes left — fish is done eating, resume normal swim
+            feeding = false; eating = false;
+            waypoint = pickWaypointInZone(curZone);
+            break;
+          }
+          eatConsumeAccum -= 1.0;
+        }
+      }
+    }
+    feedFishBtn.classList.toggle('is-active', feeding);
+
+    // Smoother turn-in while approaching food (gentler arc, not a snappy
+    // turn) — but NORMAL swim speed, not slowed (slowing was a mistake;
+    // only the approach TURN should feel calmer, not the travel speed).
+    const desiredHeading = eating ? heading : Math.atan2(dy, dx); // eating: heading frozen, no recompute
+    const headingDiff = normalizeAngle(desiredHeading - heading);
+    const turnRateNow = (feeding && !eating) ? cur.turnRate * 0.55 : cur.turnRate;
+    const maxTurn = (turnRateNow * Math.PI / 180) * dt;
+    heading += Math.max(-maxTurn, Math.min(maxTurn, headingDiff));
+
+    // JITTER FIX: once eating=true, pos is FROZEN — zero velocity, no
+    // drift-follow correction of any kind. Drift-following at any speed
+    // (even small/capped) re-introduces a feedback loop near the target
+    // and was the actual cause of the flicker/jitter during the nibble.
+    // The small visual motion during eating comes ONLY from nibbleBob
+    // (pure render-time offset, never written back into pos) below.
+    const speedMul = (feeding && !eating) ? cur.speedMul * 2.5 : eating ? 0 : 1;
+    const vx = Math.cos(heading) * cur.swimSpeed * speedMul;
+    const vy = Math.sin(heading) * cur.swimSpeed * speedMul;
+    pos.x = Math.max(SWIM_X_MIN, Math.min(SWIM_X_MAX, pos.x + vx * dt));
+
+    const nibbleBob = eating ? Math.sin(eatTimer * 9) * 2 : 0;
+    let yClampMin;
+    if(stateName === 'low_oxygen'){
+      yClampMin = curZone.yMin;
+    } else if(feeding){
+      yClampMin = waterY + 4; // fish origin can reach just under the surface
+    } else {
+      yClampMin = curZone.yMin - 20;
+    }
+    pos.y = Math.max(yClampMin, Math.min(curZone.yMax + 20, pos.y + vy * dt + nibbleBob * dt * 6));
+
+    if(stateName === 'dead'){
+      // Always ease toward a fixed, canonical orientation — this is what
+      // guarantees a predictable head-down/tail-up settle with no flipping,
+      // regardless of which way it happened to be facing when it died.
+      facing += (1 - facing) * (1 - Math.exp(-dt / 0.25));
+    } else if(feeding){
+      // locked once at the moment Feed Fish was clicked — never re-evaluated
+      // mid-approach, which is what was causing the jitter/flip-flop
+      facing += (feedLockedFacing - facing) * (1 - Math.exp(-dt / 0.25));
+    } else if(stateName !== 'low_oxygen'){
+      const facingTarget = vx >= 0 ? 1 : -1;
+      facing += (facingTarget - facing) * (1 - Math.exp(-dt / 0.25)); // quick flip is fine, it's a reflex, not a mood
+    }
+
+    // small banking lean into turns — purely cosmetic, self-smoothing since
+    // heading itself only turns at a capped rate
+    const bank = Math.max(-15, Math.min(15, normalizeAngle(heading - prevHeading) * (180 / Math.PI) * 2.2));
+    prevHeading = heading;
+
+    // occasional single air-gulp twitch (sick only)
+    if(target.gulp){
+      gulpTimer -= dt;
+      if(gulpTimer <= 0){ gulpPulse = 1; gulpTimer = randRange(4, 7); }
+    }
+    gulpPulse *= Math.exp(-dt / 0.3);
+
+    // continuous gasping bob — amplitude eases in/out with cur.gaspAmp,
+    // so it fades in smoothly when entering low-oxygen and fades out leaving it
+    gaspPhase += GASP_FREQ * dt;
+    const gaspOffset = Math.sin(gaspPhase) * cur.gaspAmp;
+
+    swayPhase += SWAY_BASE_FREQ * cur.speedMul * dt;
+    tailPhase += TAIL_BASE_FREQ * cur.speedMul * dt;
+
+    // Sick/low-oxygen fish don't beat their tail on a perfectly even rhythm —
+    // a smooth product of two slow, incommensurate sine waves gives an
+    // organic strong/weak wobble instead of a metronome (no random popping,
+    // since it's a continuous function of time).
+    const raggedness = (stateName === 'sick' || stateName === 'low_oxygen')
+      ? 0.65 + 0.35 * Math.sin(now * 0.0023 + 1.7) * Math.sin(now * 0.0017 + 0.4)
+      : 1;
+
+    // Head angle is locked at the instant of arrival (eatTiltLocked) instead
+    // of being recomputed every frame from dx/dy — recomputing it live created
+    // a closed feedback loop (tilt -> offset -> dx/dy -> tilt) that resonated
+    // into a fast vibration. Only the decorative swivel still moves each frame.
+    const feedingSwivel = eating ? Math.sin(eatTimer * 4.2) * 16 : 0;
+
+    // When eating starts, ease the tilt from eatTiltFrom (the angle at arrival)
+    // to eatTiltLocked over 0.45s — eliminates the snap jump on arrival.
+    // After the ease completes the angle is fully locked, same as before.
+    const eatTiltEaseDur = 0.45;
+    const eatTiltT = eating ? Math.min(eatTimer / eatTiltEaseDur, 1) : 0;
+    const eatTiltSmooth = eatTiltT * eatTiltT * (3 - 2 * eatTiltT); // smoothstep
+    const activeTilt = eating
+      ? eatTiltFrom + (eatTiltLocked - eatTiltFrom) * eatTiltSmooth + feedingSwivel
+      : cur.restTilt;
+    const swayAngle = activeTilt + bank + Math.sin(swayPhase) * cur.swayAmp;
+    lastSwayAngle = swayAngle;
+    const tailAngle = Math.sin(tailPhase) * cur.tailAmp * raggedness;
+
+    // dead fish has zero self-driven motion — any sway it has comes purely
+    // from passive water disturbance (wave height/speed), like a body
+    // being pushed around rather than swimming
+    let deadDrift = 0, deadBob = 0;
+    if(stateName === 'dead'){
+      const waveAmp = parseFloat(waveHeightSlider.value);
+      deadDrift = Math.sin(wavePhase * 0.6 + 2.1) * waveAmp * 0.35;
+      deadBob   = Math.sin(wavePhase * 0.5 + 0.8) * waveAmp * 0.25;
+    }
+
+    fishPosition.setAttribute('transform', `translate(${pos.x + deadDrift} ${pos.y - gulpPulse * 10 - gaspOffset + deadBob})`);
+    fishRoot.setAttribute('transform', `rotate(${swayAngle + deadDrift * 0.6} ${SWAY_PIVOT.x} ${SWAY_PIVOT.y})`);
+    fishArt.setAttribute('transform', `translate(${CENTER_X * (1 - facing)} 0) scale(${facing} 1)`);
+    tailGroup.setAttribute('transform', `rotate(${tailAngle} ${TAIL_PIVOT.x} ${TAIL_PIVOT.y})`);
+
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+
+})();
+
+/* ============================================================
+   ALGAE SYSTEM
+   Glass-stuck algae: small green circles that cling to the
+   left wall, right wall, and floor of the tank.
+
+   Visual logic:
+   - Density is highest at the bottom (floor + lower walls)
+     and fades out gradually toward the water surface.
+   - Near the waterline, a slightly denser band forms — this
+     is where glass-stuck algae naturally accumulates at the
+     air/water boundary.
+   - The slider (0-100) controls overall amount. At 0 = no
+     algae. At 100 = heavy coverage across all surfaces.
+
+   Implementation:
+   - A fixed pool of circle positions is pre-generated once
+     using a deterministic LCG pseudo-RNG (seeded) so positions
+     never jump when the slider moves — we just show more or fewer.
+   - Each circle stores: x, y, r, and a base opacity.
+   - drawAlgae(waterY) is called every frame from the tick loop.
+     It reads the slider, decides how many circles to show, and
+     updates their visibility. Hidden circles get opacity 0 but
+     are never removed from the DOM — just O(n) attribute writes.
+
+   Wall/floor regions (SVG coordinates):
+   - LEFT WALL:  x near 12.8, y from waterY down to 476.8
+   - RIGHT WALL: x near 958.4, y from waterY down to 476.8
+   - FLOOR:      y near 476.8, x across full tank width
+   Circles spread a few px inward from each glass surface.
+   ============================================================ */
+(function(){
+
+  const algaeGroup  = document.getElementById('algae');
+  const algaeSlider = document.getElementById('algaeSlider');
+
+  // Tank glass boundaries in SVG coordinates
+  const TANK_LEFT   = 12.8;
+  const TANK_RIGHT  = 958.4;
+  const TANK_BOTTOM = 476.8;
+
+  // How far inward from each wall the algae can spread (px)
+  const WALL_SPREAD  = 22;
+  // How far up from the floor the floor circles can appear (px)
+  const FLOOR_SPREAD = 12;
+
+  // Total circles in the pool. Slider at 100 shows all of them.
+  const POOL_SIZE = 420;
+
+  // Algae color palette: dark greens and olive tones
+  const ALGAE_COLORS = ['#2d6a2d','#3a7d2e','#4a8c35','#256325','#1e5c1e','#517a2a','#3d6b1f'];
+
+  // Deterministic LCG pseudo-RNG — same seed always produces the
+  // same circle positions, so dragging the slider never repositions them.
+  function makeLCG(seed){
+    let s = seed >>> 0;
+    return function(){
+      s = (Math.imul(1664525, s) + 1013904223) >>> 0;
+      return s / 4294967296;
+    };
+  }
+  const rng = makeLCG(0xdeadbeef);
+
+  // Pre-generate all circle objects once with fixed positions.
+  //
+  // Region split: 40% left wall, 40% right wall, 20% floor.
+  //
+  // Wall y-distribution: bottom-heavy via power curve (u^2 maps
+  // uniform [0,1] to a distribution skewed toward the bottom).
+  // About 15% of wall circles are placed in a surface band — their
+  // y is stored as a NEGATIVE number meaning "this many px below
+  // the live waterline", so they track the surface as the slider moves.
+  //
+  // Floor circles are spread randomly along the full tank width
+  // and sit within FLOOR_SPREAD px of the tank bottom.
+  const pool = [];
+
+  for(let i = 0; i < POOL_SIZE; i++){
+    const which = rng();
+    let cx, cy;
+
+    if(which < 0.40){
+      // LEFT WALL — x close to left glass, spreading slightly inward
+      cx = TANK_LEFT + rng() * WALL_SPREAD;
+      if(rng() < 0.15){
+        // Surface band: negative y = offset below waterY, resolved in draw
+        cy = -(rng() * 18 + 2);
+      } else {
+        const u = rng();
+        cy = TANK_BOTTOM - u * u * (TANK_BOTTOM - 50); // bottom-heavy
+      }
+    } else if(which < 0.80){
+      // RIGHT WALL — x close to right glass, spreading slightly inward
+      cx = TANK_RIGHT - rng() * WALL_SPREAD;
+      if(rng() < 0.15){
+        cy = -(rng() * 18 + 2); // surface band
+      } else {
+        const u = rng();
+        cy = TANK_BOTTOM - u * u * (TANK_BOTTOM - 50); // bottom-heavy
+      }
+    } else {
+      // FLOOR — spread across full width, sitting near the tank bottom
+      cx = TANK_LEFT + rng() * (TANK_RIGHT - TANK_LEFT);
+      cy = TANK_BOTTOM - rng() * FLOOR_SPREAD;
+    }
+
+    const r           = 2 + rng() * 4.5;
+    const baseOpacity = 0.55 + rng() * 0.40;
+    const color       = ALGAE_COLORS[Math.floor(rng() * ALGAE_COLORS.length)];
+
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    el.setAttribute('r', r.toFixed(1));
+    el.setAttribute('fill', color);
+    el.setAttribute('fill-opacity', '0'); // hidden until slider > 0
+    algaeGroup.appendChild(el);
+
+    pool.push({ el, cx, cy, baseOpacity });
+  }
+
+  // Called every frame by the fish tick loop, receives the live waterY.
+  // Shows the first `showCount` circles in the pool; hides the rest.
+  // Circles are ordered bottom-to-surface by construction (bottom-heavy
+  // distribution), so revealing more circles naturally fills upward.
+  function drawAlgae(waterY){
+    const amount    = parseInt(algaeSlider.value, 10); // 0-100
+    const showCount = Math.round((amount / 100) * POOL_SIZE);
+
+    for(let i = 0; i < POOL_SIZE; i++){
+      const c = pool[i];
+
+      if(i >= showCount){
+        // This circle is beyond the current amount — hide it
+        c.el.setAttribute('fill-opacity', '0');
+        continue;
+      }
+
+      // Resolve actual SVG y:
+      // Negative cy = surface-relative circle; add to live waterY
+      // Positive cy = absolute position; clamp so it stays below waterY
+      const resolvedY = c.cy < 0
+        ? waterY + Math.abs(c.cy)           // surface band tracks waterline
+        : Math.max(waterY + 8, c.cy);       // wall/floor circle, clamped
+
+      // Hide if somehow above the waterline (edge case protection)
+      const opacity = resolvedY < waterY ? 0 : c.baseOpacity;
+
+      c.el.setAttribute('cx', c.cx.toFixed(1));
+      c.el.setAttribute('cy', resolvedY.toFixed(1));
+      c.el.setAttribute('fill-opacity', opacity.toFixed(2));
+    }
+  }
+
+  // Expose so the fish tick loop can call it each frame with live waterY
+  window.drawAlgae = drawAlgae;
+
+})();
+
+/* ============================================================
+   WATER BODY SYSTEM
+   A filled wavy shape that represents the visible water mass,
+   spanning from the animated surface down to the tank floor.
+
+   Color behavior (controlled by the cloudiness slider 0-100):
+     0   → blue (#4ab3e8), low opacity  — clean, clear water
+     100 → yellowish-green (#a8c832), higher opacity — cloudy/dirty water
+   Both hue and opacity interpolate smoothly between these two
+   endpoints as the slider moves.
+
+   Wave behavior:
+   - Uses the SAME wave height and wave speed sliders as the
+     black surface waterline.
+   - Has a fixed phase offset (BODY_PHASE_OFFSET) so its ripple
+     is slightly out of sync with the surface line — it moves
+     independently rather than being a perfect copy.
+
+   Shape:
+   - Top edge: same buildWaterPath() polyline used for the surface
+     line, but at the body's own phase.
+   - Bottom: straight horizontal line at TANK_BOTTOM, connecting
+     right-to-left to close the filled polygon.
+   ============================================================ */
+(function(){
+
+  const waterBodyEl      = document.getElementById('waterBody');
+  const cloudinessSlider = document.getElementById('cloudinessSlider');
+
+  const TANK_LEFT   = 12.8;     // full tank glass left edge
+  const TANK_RIGHT  = 958.4;    // full tank glass right edge
+  const TANK_BOTTOM = 476.8;    // tank floor y
+
+  // Phase offset in radians — shifts the body wave out of lockstep
+  // with the surface line so they ripple at a slightly different tempo
+  const BODY_PHASE_OFFSET = 2.8;
+
+  // Color endpoints for lerp
+  // Clean water: blue
+  const COLOR_CLEAN = { r: 74,  g: 179, b: 232 }; // #4ab3e8
+  // Cloudy water: yellowish-green
+  const COLOR_CLOUDY = { r: 168, g: 200, b: 50  }; // #a8c832
+
+  // Opacity endpoints
+  const OPACITY_CLEAN  = 0.28;  // subtle tint when clean
+  const OPACITY_CLOUDY = 0.72;  // noticeably murky when fully cloudy
+
+  // Reuse buildWaterPath from the main IIFE to generate the wavy top edge.
+  // It is defined in the fish IIFE scope, so we re-implement a local copy
+  // here using the same algorithm to stay self-contained.
+  function buildBodyTopPath(waterY, amplitude, phase){
+    const xStart = TANK_LEFT, xEnd = TANK_RIGHT, segments = 36, wavelength = 70;
+    const points = [];
+    for(let i = 0; i <= segments; i++){
+      const x = xStart + (xEnd - xStart) * (i / segments);
+      const y = waterY + Math.sin(x / wavelength + phase) * amplitude;
+      points.push({ x, y });
+    }
+    return points;
+  }
+
+  // Lerp a single channel between two values
+  function lerp(a, b, t){ return Math.round(a + (b - a) * t); }
+
+  // Called every frame by the fish tick loop.
+  // waterY     = live water surface y
+  // amplitude  = wave height slider value
+  // wavePhase  = current wave phase from the main loop (we add our offset)
+  function updateWaterBody(waterY, amplitude, wavePhase){
+    const cloudiness = parseInt(cloudinessSlider.value, 10) / 100; // 0.0–1.0
+
+    // Compute color by linearly interpolating between clean and cloudy
+    const r = lerp(COLOR_CLEAN.r, COLOR_CLOUDY.r, cloudiness);
+    const g = lerp(COLOR_CLEAN.g, COLOR_CLOUDY.g, cloudiness);
+    const b = lerp(COLOR_CLEAN.b, COLOR_CLOUDY.b, cloudiness);
+    const opacity = OPACITY_CLEAN + (OPACITY_CLOUDY - OPACITY_CLEAN) * cloudiness;
+
+    // Build the wavy top edge using offset phase
+    const topPoints = buildBodyTopPath(waterY, amplitude, wavePhase + BODY_PHASE_OFFSET);
+
+    // Build SVG path: M to first top point, L across all top points,
+    // then straight line down-right to bottom-right, across to bottom-left,
+    // back up to start — forming a closed filled shape.
+    let d = `M${topPoints[0].x.toFixed(2)},${topPoints[0].y.toFixed(2)}`;
+    for(let i = 1; i < topPoints.length; i++){
+      d += ` L${topPoints[i].x.toFixed(2)},${topPoints[i].y.toFixed(2)}`;
+    }
+    // Close bottom: go to bottom-right corner, across to bottom-left, back up
+    d += ` L${TANK_RIGHT.toFixed(2)},${TANK_BOTTOM}`;
+    d += ` L${TANK_LEFT.toFixed(2)},${TANK_BOTTOM}`;
+    d += ' Z';
+
+    waterBodyEl.setAttribute('d', d);
+    waterBodyEl.setAttribute('fill', `rgb(${r},${g},${b})`);
+    waterBodyEl.setAttribute('fill-opacity', opacity.toFixed(3));
+  }
+
+  // Expose to fish tick loop
+  window.updateWaterBody = updateWaterBody;
+
+})();
+</script>
+</body>
+</html>

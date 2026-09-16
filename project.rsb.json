@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789473977257,
-  "lastSaved": 1789539666224,
+  "lastSaved": 1789540708270,
   "theme": {
     "id": "e056981c-2d91-4af3-8695-f72225f00d50",
     "type": "theme",
@@ -34,7 +34,10 @@
     "bgInterval": 30,
     "fishVisible": true,
     "fishCount": 25,
-    "fishImages": [],
+    "fishImages": [
+      "images/img-e51e7d9279fce496.webp",
+      "images/img-5220902746808109.jpg"
+    ],
     "fishSize": 33,
     "fishSpeed": 0.03,
     "fishIconSvg": null,
@@ -72,7 +75,7 @@
           "version": 1,
           "heroType": "default",
           "bigLines": [
-            "5Hi I'm",
+            "6Hi I'm",
             "RAHAT"
           ],
           "centerText": "Hi, I am Rahat",
@@ -267,6 +270,6 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1789539546852
+    "syncedAt": 1789539681221
   }
 }

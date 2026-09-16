@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789473977257,
-  "lastSaved": 1789475808025,
+  "lastSaved": 1789538828485,
   "theme": {
     "id": "e056981c-2d91-4af3-8695-f72225f00d50",
     "type": "theme",
@@ -72,7 +72,7 @@
           "version": 1,
           "heroType": "default",
           "bigLines": [
-            "2Hi I'm",
+            "3Hi I'm",
             "RAHAT"
           ],
           "centerText": "Hi, I am Rahat",
@@ -94,7 +94,7 @@
           "id": "cc6e6d83-9ded-4e30-8df9-8a381d69198f",
           "type": "image_block",
           "version": 1,
-          "img": "images/img-3e0f8a548986b21a.png",
+          "img": "images/img-6a820a027358c9c3.jpg",
           "alt": "",
           "aspectRatio": "landscape",
           "sizeScale": 100
@@ -205,6 +205,6 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1789474913723
+    "syncedAt": 1789475840093
   }
 }

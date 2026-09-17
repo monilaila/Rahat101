@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789632622959,
-  "lastSaved": 1789642680214,
+  "lastSaved": 1789642974189,
   "theme": {
     "id": "33b2d4a0-a4b5-432d-b825-d5e471f1ce35",
     "type": "theme",
@@ -35,7 +35,18 @@
     "bgInterval": 5,
     "fishVisible": true,
     "fishCount": 25,
-    "fishImages": [],
+    "fishImages": [
+      "fishImage/img-f382d076538c9dce.png",
+      "fishImage/img-4258c04bb12c50d4.png",
+      "fishImage/img-812d0ddcefbff87a.png",
+      "fishImage/img-1eea1c7af696c5cf.png",
+      "fishImage/img-11c263802f24453a.png",
+      "fishImage/img-4a87df7611fb6ae0.png",
+      "fishImage/img-8fe3dbb354dc8865.png",
+      "fishImage/img-e740cf6078c20da7.png",
+      "fishImage/img-751a312f834e60dd.png",
+      "fishImage/img-1cb4d41b8bd1dfed.png"
+    ],
     "fishSize": 33,
     "fishSpeed": 0.03,
     "fishIconSvg": null,
@@ -179,7 +190,7 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1789634423188
+    "syncedAt": 1789642700860
   },
   "thumbOverrideIndex": 2
 }

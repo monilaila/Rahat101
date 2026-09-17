@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789632622959,
-  "lastSaved": 1789634290619,
+  "lastSaved": 1789642680214,
   "theme": {
     "id": "33b2d4a0-a4b5-432d-b825-d5e471f1ce35",
     "type": "theme",
@@ -100,7 +100,7 @@
               "eyebrow": "01 — Something",
               "heading": "A Catchy Heading",
               "body": "Description text here.",
-              "img": "",
+              "img": "images/img-9c844d469dc1b183.jpg",
               "imagePos": "right"
             }
           ]
@@ -114,23 +114,23 @@
           "sizeScale": 100,
           "images": [
             {
-              "img": "images/img-3e0f8a548986b21a.png",
+              "img": "images/img-e6011dfdff046f13.jpg",
               "alt": ""
             },
             {
-              "img": "images/img-95512a3a44ba0285.png",
+              "img": "images/img-b3e0192f3656cc19.jpg",
               "alt": ""
             },
             {
-              "img": "images/img-91ff452072855d26.png",
+              "img": "images/img-049133525f279b48.jpg",
               "alt": ""
             },
             {
-              "img": "images/img-51f7213f3595fe65.png",
+              "img": "images/img-22ac7df408e6acb4.webp",
               "alt": ""
             },
             {
-              "img": "images/img-3d3aa6efe976b9f0.png",
+              "img": "images/img-0eff42d73d2c5fd3.jpg",
               "alt": ""
             }
           ]
@@ -179,6 +179,7 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1789634316759
-  }
+    "syncedAt": 1789634423188
+  },
+  "thumbOverrideIndex": 2
 }

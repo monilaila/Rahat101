@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789632622959,
-  "lastSaved": 1789634275438,
+  "lastSaved": 1789634290619,
   "theme": {
     "id": "33b2d4a0-a4b5-432d-b825-d5e471f1ce35",
     "type": "theme",
@@ -177,6 +177,8 @@
   "github": {
     "owner": "monilaila",
     "repo": "Rahat101",
-    "branch": "main"
+    "branch": "main",
+    "lastSyncStatus": "success",
+    "syncedAt": 1789634316759
   }
 }

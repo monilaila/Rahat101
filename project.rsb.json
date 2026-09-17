@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789473977257,
-  "lastSaved": 1789540708270,
+  "lastSaved": 1789629375427,
   "theme": {
     "id": "e056981c-2d91-4af3-8695-f72225f00d50",
     "type": "theme",
@@ -75,7 +75,7 @@
           "version": 1,
           "heroType": "default",
           "bigLines": [
-            "6Hi I'm",
+            "7Hi I'm",
             "RAHAT"
           ],
           "centerText": "Hi, I am Rahat",
@@ -102,9 +102,20 @@
               "eyebrow": "01 — Something",
               "heading": "A Catchy Heading",
               "body": "Description text here.",
-              "img": "images/img-13d3f708576640c2.jpg",
+              "img": "images/img-c2c985e14c0d80fd.jpg",
               "imagePos": "right"
             }
+          ]
+        },
+        {
+          "id": "fd1decf6-70c4-4d42-820e-8bc5e794dcef",
+          "type": "rich_text",
+          "version": 1,
+          "title": "Title Here",
+          "subtitle": "A short subtitle hfgh gfhgf i",
+          "paragraphs": [
+            "Your opening paragraph here. The first letter becomes a drop cap.",
+            "Second paragraph."
           ]
         },
         {
@@ -174,8 +185,8 @@
           "type": "image_gallery",
           "version": 1,
           "layout": "big-left",
-          "boxMode": "combined",
-          "sizeScale": 100,
+          "boxMode": "separate",
+          "sizeScale": 70,
           "images": [
             {
               "img": "images/img-6d3915cf7f3f2b2b.jpg",
@@ -270,6 +281,6 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1789539681221
+    "syncedAt": 1789540740970
   }
 }

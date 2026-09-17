@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789473977257,
-  "lastSaved": 1789629375427,
+  "lastSaved": 1789630883150,
   "theme": {
     "id": "e056981c-2d91-4af3-8695-f72225f00d50",
     "type": "theme",
@@ -28,9 +28,9 @@
     "colorWarning": "#e07a7a",
     "colorWhite": "#ffffff",
     "bgImages": [
-      "images/img-049133525f279b48.jpg"
+      "images/img-22215287c39d5f8d.png"
     ],
-    "bgFocusX": 73,
+    "bgFocusX": 60,
     "bgInterval": 30,
     "fishVisible": true,
     "fishCount": 25,
@@ -281,6 +281,6 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1789540740970
+    "syncedAt": 1789629400573
   }
 }

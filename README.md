@@ -33,6 +33,7 @@ Set in Theme → Glass. Border Radius, Blur, and Distortion shape the frosted-gl
 
 ## Custom blocks on this site
 - **My Custom Block11**
+- **My Custom Block**
 
 ## Known engineering rules (do not reintroduce these bugs)
 - The shared glass-blur filter (`#frosted`) is one expensive resource for the whole page — keep it to 1-2 elements per block; never resize/redeclare the filter itself.

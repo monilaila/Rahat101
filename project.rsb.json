@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789419635481,
-  "lastSaved": 1791068660276,
+  "lastSaved": 1791068844063,
   "theme": {
     "id": "2d4f6e38-51d9-4529-b1ab-3ad6f40c86f1",
     "type": "theme",
@@ -95,61 +95,6 @@
           "bannerDescription": "A short paragraph describing this section.",
           "overlayStrength": 65,
           "overlayBlur": 10
-        },
-        {
-          "id": "d36ea613-9edc-4113-94d6-b10f261bb1aa",
-          "type": "custom_block",
-          "version": 1,
-          "name": "My Custom Block",
-          "description": "",
-          "tags": "",
-          "code": "",
-          "libraryRefId": null,
-          "hiddenImages": [],
-          "controls": []
-        },
-        {
-          "id": "b9e784b4-65f4-4631-b201-95c7296cec23",
-          "type": "form_block",
-          "version": 1,
-          "formTitle": "Contact Us",
-          "formTitleAlign": "center",
-          "formSubtitle": "Fill out the form below and we'll get back to you.",
-          "scriptUrl": "",
-          "sheetTabName": "Sheet1",
-          "steps": [
-            {
-              "id": "d936a24c-8496-4c02-b05f-1bf90dfc632c",
-              "title": "Your Information",
-              "fields": [
-                {
-                  "id": "7757a6e2-63c4-498a-b814-5eac9710c079",
-                  "label": "Full Name",
-                  "type": "text",
-                  "width": "full",
-                  "placeholder": "Enter your name",
-                  "required": true,
-                  "options": ""
-                },
-                {
-                  "id": "376a6dd2-356c-4f44-95e2-756ed141895a",
-                  "label": "Email Address",
-                  "type": "email",
-                  "width": "full",
-                  "placeholder": "your@email.com",
-                  "required": true,
-                  "options": ""
-                }
-              ]
-            }
-          ],
-          "uniqueRules": [],
-          "submissionLimit": 1,
-          "honeypot": true,
-          "collectDeviceInfo": false,
-          "submitButtonText": "Submit",
-          "successMessage": "Thank you! Your submission has been received.",
-          "redirectUrl": ""
         },
         {
           "id": "5c017909-bcb0-41c9-ad84-8a2145ee8c62",
@@ -267,7 +212,7 @@
               "token": "GOOGLE_CLIENT_ID",
               "label": "Google OAuth Client ID",
               "type": "text",
-              "value": "PASTE_FULL_CLIENT_ID.apps.googleusercontent.com",
+              "value": "583545653555-qc48sfb9402lbn94sd686mrdipddb2kk.apps.googleusercontent.com",
               "min": 0,
               "max": 100,
               "step": 1
@@ -277,7 +222,7 @@
               "token": "SCRIPT_URL",
               "label": "Apps Script Web App URL (ends in /exec)",
               "type": "url",
-              "value": "",
+              "value": "https://script.google.com/macros/s/AKfycbzcsoU0lC0F1GSmLWq48t0yePgBkNrBlj_SVl0QjYXjyXDOSNJNxql0UMrCUncRlmVikQ/exec",
               "min": 0,
               "max": 100,
               "step": 1
@@ -297,7 +242,7 @@
               "token": "HIDDEN_TEXT",
               "label": "Hidden anti-fakery text (faint in PNG)",
               "type": "text",
-              "value": "RAHAT-ORIGINAL-DOC",
+              "value": "RAHAT-100-DOC",
               "min": 0,
               "max": 100,
               "step": 1
@@ -307,7 +252,7 @@
               "token": "BUTTON_LABEL",
               "label": "Confirm button label",
               "type": "text",
-              "value": "Confirm & Sign",
+              "value": "Confirm",
               "min": 0,
               "max": 100,
               "step": 1
@@ -345,6 +290,6 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1791068497636
+    "syncedAt": 1791068681003
   }
 }

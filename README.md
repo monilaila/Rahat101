@@ -32,7 +32,7 @@ Set in Theme → Glass. Border Radius, Blur, and Distortion shape the frosted-gl
 - **Auto-Detect Background** (on): a single Auto Darken Intensity slider instead. The site samples its own background image live in the browser and darkens the glass automatically — more on a light background, none on a dark one — always toward your Darken Color, never brighter (brightening was left out on purpose: it makes white text on glass unreadable).
 
 ## Custom blocks on this site
-- **My Custom Block**
+- **My Custom Block11**
 
 ## Known engineering rules (do not reintroduce these bugs)
 - The shared glass-blur filter (`#frosted`) is one expensive resource for the whole page — keep it to 1-2 elements per block; never resize/redeclare the filter itself.

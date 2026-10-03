@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789419635481,
-  "lastSaved": 1791063481952,
+  "lastSaved": 1791068149272,
   "theme": {
     "id": "2d4f6e38-51d9-4529-b1ab-3ad6f40c86f1",
     "type": "theme",
@@ -59,11 +59,11 @@
     "contactEmail": "",
     "contactPhone": "",
     "contactAddress": "",
-    "glassBrightness": 0,
+    "glassBrightness": -28,
     "glassBrightColor": "#398452",
     "glassDarkColor": "#000000",
-    "glassAutoDetect": true,
-    "glassAutoIntensity": 51
+    "glassAutoDetect": false,
+    "glassAutoIntensity": 100
   },
   "pages": [
     {
@@ -150,6 +150,169 @@
           "submitButtonText": "Submit",
           "successMessage": "Thank you! Your submission has been received.",
           "redirectUrl": ""
+        },
+        {
+          "id": "5c017909-bcb0-41c9-ad84-8a2145ee8c62",
+          "type": "custom_block",
+          "version": 1,
+          "name": "My Custom Block",
+          "description": "",
+          "tags": "",
+          "code": "<div id=\"rtSign\">\n<style>\n#rtSign .rt-panel{position:relative;width:min(820px,94vw);margin:0 auto;padding:30px;border-radius:var(--theme-radius);color:var(--theme-white);font-family:var(--theme-font-body);background:var(--theme-surface);backdrop-filter:url(#frosted);-webkit-backdrop-filter:url(#frosted);box-sizing:border-box;overflow:hidden}\n#rtSign .rt-panel>span:nth-child(1),#rtSign .rt-panel>span:nth-child(2){border-radius:var(--theme-radius)}\n#rtSign *{box-sizing:border-box}\n#rtSign h2{font-family:var(--theme-font-heading);font-size:26px;margin:4px 0 6px;color:var(--theme-white)}\n#rtSign .rt-eye{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--theme-text3);margin:0}\n#rtSign .rt-id{font-size:12px;color:var(--theme-text2);font-family:ui-monospace,Menlo,Consolas,monospace}\n#rtSign .rt-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px;margin:18px 0}\n#rtSign .rt-grid .full{grid-column:1/-1}\n#rtSign .rt-l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--theme-text3);margin:0 0 3px}\n#rtSign .rt-v{font-size:14px;color:var(--theme-white);margin:0;white-space:pre-line}\n#rtSign .rt-sum{font-size:14px;line-height:1.7;color:var(--theme-white);white-space:pre-line;margin:0 0 12px}\n#rtSign .rt-terms{border-top:1px solid var(--theme-border);margin-top:14px;padding-top:14px;max-height:340px;overflow:auto}\n#rtSign .rt-terms p{font-size:13px;line-height:1.65;color:var(--theme-text2);margin:0 0 12px}\n#rtSign .rt-terms strong{display:block;color:var(--theme-white);font-size:13px;margin-bottom:2px}\n#rtSign a{color:var(--theme-white);text-decoration:underline;text-underline-offset:3px}\n#rtSign hr{border:0;border-top:1px solid var(--theme-border);margin:22px 0}\n#rtSign .rt-h{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--theme-text2);margin:0 0 10px}\n#rtSign .rt-b{font:inherit;font-size:13px;font-weight:600;color:var(--theme-white);background:rgba(255,255,255,.12);border:0;border-radius:var(--theme-radius-sub);padding:9px 16px;cursor:pointer;transition:transform .15s,opacity .15s}\n#rtSign .rt-b:hover{transform:translateY(-2px)}\n#rtSign .rt-b.on{color:var(--theme-primary);box-shadow:inset 0 0 0 1px var(--theme-primary)}\n#rtSign .rt-chk{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;margin-bottom:8px;border-radius:var(--theme-radius-sub);background:rgba(255,255,255,.06);font-size:13px;line-height:1.55;color:var(--theme-white);cursor:pointer}\n#rtSign .rt-chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--theme-primary);flex:none}\n#rtSign .rt-in{width:100%;font:inherit;font-size:14px;color:var(--theme-white);background:rgba(255,255,255,.08);border:1px solid var(--theme-border);border-radius:var(--theme-radius-sub);padding:11px 14px;outline:none}\n#rtSign .rt-in:focus{border-color:var(--theme-border-strong)}\n#rtSign .rt-in::placeholder{color:var(--theme-text3)}\n#rtSign .rt-pad{width:100%;aspect-ratio:10/3;display:block;border-radius:var(--theme-radius-sub);background:rgba(255,255,255,.06);border:1px dashed var(--theme-border-strong);touch-action:none;cursor:crosshair}\n#rtSign .rt-pv{height:90px;display:flex;align-items:center;justify-content:center;border-radius:var(--theme-radius-sub);background:rgba(255,255,255,.06);border:1px dashed var(--theme-border-strong);font:italic 38px \"Segoe Script\",\"Brush Script MT\",\"Snell Roundhand\",cursive;color:var(--theme-white);overflow:hidden;padding:0 14px;white-space:nowrap}\n#rtSign .rt-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}\n#rtSign .rt-chip{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;border-radius:var(--theme-radius-sub);background:rgba(255,255,255,.08);font-size:13px}\n#rtSign .rt-small{font-size:12px;color:var(--theme-text3)}\n#rtSign .rt-err{min-height:18px;margin:12px 0 0;font-size:13px;color:var(--theme-warning)}\n#rtSign .rt-go{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:13px 28px;border:0;border-radius:var(--theme-radius-sub);font:inherit;font-size:14px;font-weight:600;color:var(--theme-white);cursor:pointer;background:rgba(255,255,255,.18);backdrop-filter:url(#frosted);-webkit-backdrop-filter:url(#frosted);transition:transform .15s,opacity .15s}\n#rtSign .rt-go>span:nth-child(1),#rtSign .rt-go>span:nth-child(2){border-radius:var(--theme-radius-sub)}\n#rtSign .rt-go:hover{transform:translateY(-2px)}\n#rtSign .rt-go.rt-off{opacity:.5}\n#rtSign .rt-ov{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;background:color-mix(in srgb,var(--theme-bg) 82%,transparent)}\n#rtSign .rt-ov[hidden],#rtSign [hidden]{display:none}\n#rtSign .rt-sp{width:44px;height:44px;border-radius:50%;border:3px solid var(--theme-border-strong);border-top-color:var(--theme-primary);animation:rtspin .9s linear infinite}\n@keyframes rtspin{to{transform:rotate(360deg)}}\n@media(max-width:560px){#rtSign .rt-grid{grid-template-columns:1fr}#rtSign .rt-panel{padding:20px}}\n</style>\n<div class=\"rt-panel gb\"><span></span><span></span>\n<div hidden><span data-k=\"cid\">{{GOOGLE_CLIENT_ID}}</span><span data-k=\"url\">{{SCRIPT_URL}}</span><span data-k=\"prefix\">{{ID_PREFIX}}</span><span data-k=\"hidden\">{{HIDDEN_TEXT}}</span></div>\n<p class=\"rt-eye\">Contract ID &nbsp;<span class=\"rt-id\" id=\"rtCid\"></span></p>\n<h2 data-k=\"title\">{{HEADING}}</h2>\n<div class=\"rt-grid\">\n<div><p class=\"rt-l\">Project</p><p class=\"rt-v\" data-k=\"project\">{{PROJECT_NAME}}</p></div>\n<div><p class=\"rt-l\">Client</p><p class=\"rt-v\" data-k=\"client\">{{CLIENT_NAME}}</p></div>\n<div><p class=\"rt-l\">Developer</p><p class=\"rt-v\" data-k=\"dev\">{{DEVELOPER_NAME}}</p></div>\n<div><p class=\"rt-l\">Delivery date</p><p class=\"rt-v\" data-k=\"delivery\">{{DELIVERY_DATE}}</p></div>\n<div><p class=\"rt-l\">Payment deadline</p><p class=\"rt-v\" data-k=\"pay\">{{PAYMENT_DEADLINE}}</p></div>\n<div class=\"full\"><p class=\"rt-l\">Project description</p><p class=\"rt-v\" data-k=\"desc\">{{PROJECT_DESC}}</p></div>\n</div>\n<p class=\"rt-sum\" data-k=\"summary\">{{SUMMARY}}</p>\n<p class=\"rt-small\" style=\"margin:0 0 12px\">Full policy: <a href=\"{{POLICY_URL}}\" target=\"_blank\" rel=\"noopener noreferrer\" data-k=\"policy\">{{POLICY_URL}}</a></p>\n<button type=\"button\" class=\"rt-b\" id=\"rtMore\">See full terms &amp; conditions</button>\n<div class=\"rt-terms\" id=\"rtTerms\" hidden></div>\n<div hidden data-k=\"terms\">{{TERMS}}</div>\n<div id=\"rtForm\">\n<hr>\n<p class=\"rt-h\">1 · Verify your identity</p>\n<div id=\"rtG\"></div>\n<div class=\"rt-chip\" id=\"rtChip\" hidden><span id=\"rtWho\"></span><button type=\"button\" class=\"rt-b\" id=\"rtOut\">Use a different account</button></div>\n<hr>\n<p class=\"rt-h\">2 · Acknowledgements</p>\n<div id=\"rtChecks\"></div>\n<hr>\n<p class=\"rt-h\">3 · Sign</p>\n<input class=\"rt-in\" id=\"rtName\" type=\"text\" maxlength=\"80\" placeholder=\"Type your full legal name\" autocomplete=\"name\" style=\"margin-bottom:12px\">\n<div class=\"rt-row\"><button type=\"button\" class=\"rt-b on\" data-m=\"type\">Type signature</button><button type=\"button\" class=\"rt-b\" data-m=\"draw\">Draw signature</button><button type=\"button\" class=\"rt-b\" id=\"rtClr\" hidden>Clear</button></div>\n<div class=\"rt-pv\" id=\"rtPv\"></div>\n<svg class=\"rt-pad\" id=\"rtPad\" viewBox=\"0 0 600 180\" hidden></svg>\n<p class=\"rt-l\" style=\"margin:16px 0 6px\">Note (optional) <span id=\"rtCnt\">0/150</span></p>\n<textarea class=\"rt-in\" id=\"rtNote\" maxlength=\"150\" rows=\"2\" placeholder=\"Anything you would like to add\"></textarea>\n<p class=\"rt-err\" id=\"rtErr\" role=\"alert\"></p>\n<div style=\"margin-top:14px\"><button type=\"button\" class=\"rt-go gb rt-off\" id=\"rtGo\"><span></span><span></span>{{BUTTON_LABEL}}</button></div>\n</div>\n<div id=\"rtDone\" hidden>\n<hr><h2>Agreement signed</h2>\n<p class=\"rt-sum\">Thank you. Your signature has been recorded and a copy of the signed contract (PNG) has been downloaded to your device. Keep it for your records.</p>\n<button type=\"button\" class=\"rt-b\" id=\"rtAgain\">Download my copy again</button>\n</div>\n<div class=\"rt-ov\" id=\"rtOv\" hidden><div class=\"rt-sp\" id=\"rtSp\"></div><p class=\"rt-v\" id=\"rtOt\" style=\"font-size:16px;font-weight:600\"></p><p class=\"rt-small\" id=\"rtOs\"></p><div class=\"rt-row\" id=\"rtOb\" style=\"justify-content:center\"></div></div>\n</div>\n<script>\n(function(){\nvar R=document.getElementById('rtSign');if(!R)return;\nvar $=function(s){return R.querySelector(s)};\nvar T=function(k){var e=$('[data-k=\"'+k+'\"]');return e?e.textContent.trim():''};\nvar S={cred:null,g:null,m:'type',strokes:[],cur:null,t0:Date.now(),busy:false,blob:null,last:null,wait:null};\nvar ITEMS=[['ack_scope','Scope of Service \\u2014 I understand the website is a platform connecting me with my customers, and that I personally perform all payment verification and order fulfilment.'],['ack_tested','Testing & Acceptance \\u2014 I have tested every feature of the project and confirm that it works as described.'],['ack_responsibility','Responsibility After Signing \\u2014 I accept that, after signing, I am responsible for any issue not covered by the Covered Services section of the Terms.'],['ack_exclusions','Excluded Services \\u2014 I understand the project does not provide automatic payment processing, currency exchange or game-currency delivery unless expressly stated.'],['ack_payment','Payment \\u2014 I will pay the agreed fee within three (3) days of signing and understand that non-payment may result in permanent suspension of the service.'],['ack_agreement','Agreement \\u2014 I have read the Summary and Full Terms, I accept them in full, and I am signing voluntarily.']];\nvar p2=function(n){return String(n).padStart(2,'0')};\nvar CID=(function(){var a=new Uint8Array(3);crypto.getRandomValues(a);var d=new Date();return (T('prefix')||'CTR')+'-'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+Array.from(a,function(x){return p2(x.toString(16))}).join('').toUpperCase()})();\n$('#rtCid').textContent=CID;\nfunction err(m){$('#rtErr').textContent=m||''}\n/* terms + see more */\nT('terms')&&$('[data-k=\"terms\"]').textContent.split(/\\n\\s*\\n/).forEach(function(b){var l=b.trim().split('\\n'),p=document.createElement('p'),s=document.createElement('strong');s.textContent=l.shift();p.appendChild(s);p.appendChild(document.createTextNode(l.join(' ')));$('#rtTerms').appendChild(p)});\n$('#rtMore').onclick=function(){var t=$('#rtTerms');t.hidden=!t.hidden;this.textContent=t.hidden?'See full terms & conditions':'Hide full terms'};\n/* checkboxes */\nITEMS.forEach(function(it){var l=document.createElement('label'),i=document.createElement('input'),s=document.createElement('span');l.className='rt-chk';i.type='checkbox';i.dataset.k=it[0];i.onchange=refresh;s.textContent=it[1];l.appendChild(i);l.appendChild(s);$('#rtChecks').appendChild(l)});\n/* google */\nfunction jwt(t){var p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(decodeURIComponent(atob(p).split('').map(function(c){return '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)}).join('')))}\nfunction onCred(r){try{var g=jwt(r.credential);if(!g.email||g.email_verified===false)return err('This Google account email is not verified.');S.cred=r.credential;S.g=g;$('#rtWho').textContent='Verified: '+(g.name||'')+' \\u00B7 '+g.email;$('#rtG').hidden=true;$('#rtChip').hidden=false;err('');refresh()}catch(e){err('Google verification failed. Please try again.')}}\n$('#rtOut').onclick=function(){S.cred=S.g=null;$('#rtChip').hidden=true;$('#rtG').hidden=false;try{google.accounts.id.disableAutoSelect()}catch(e){}refresh()};\n(function(){var cid=T('cid');if(cid.indexOf('.apps.googleusercontent.com')<0)return err('Configuration error: a valid Google Client ID has not been set.');\nvar go=function(){google.accounts.id.initialize({client_id:cid,callback:onCred});google.accounts.id.renderButton($('#rtG'),{theme:'filled_black',size:'large',shape:'pill',text:'continue_with',width:280})};\nif(window.google&&google.accounts&&google.accounts.id)return go();\nvar s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=go;s.onerror=function(){err('Could not load Google sign-in. Please check your connection.')};R.appendChild(s)})();\n/* signature */\nvar pad=$('#rtPad'),pv=$('#rtPv'),nm=$('#rtName');\nfunction dOf(a){return a.map(function(s){return s.length<2?'M'+s[0][0]+' '+s[0][1]+'l.1 0':'M'+s.map(function(q){return q[0]+' '+q[1]}).join('L')}).join('')}\nfunction redraw(){pad.innerHTML='';S.strokes.concat(S.cur?[S.cur]:[]).forEach(function(s){var e=document.createElementNS('http://www.w3.org/2000/svg','path');e.setAttribute('d',dOf([s]));e.setAttribute('fill','none');e.setAttribute('stroke','currentColor');e.setAttribute('stroke-width','2.6');e.setAttribute('stroke-linecap','round');e.setAttribute('stroke-linejoin','round');pad.appendChild(e)})}\nfunction pt(e){var r=pad.getBoundingClientRect();return [+((e.clientX-r.left)/r.width*600).toFixed(1),+((e.clientY-r.top)/r.height*180).toFixed(1)]}\npad.style.color='var(--theme-white)';\npad.onpointerdown=function(e){e.preventDefault();pad.setPointerCapture(e.pointerId);S.cur=[pt(e)];redraw()};\npad.onpointermove=function(e){if(!S.cur)return;var q=pt(e),l=S.cur[S.cur.length-1];if(Math.hypot(q[0]-l[0],q[1]-l[1])>1.5){S.cur.push(q);redraw()}};\npad.onpointerup=pad.onpointercancel=function(){if(S.cur){S.strokes.push(S.cur);S.cur=null;redraw();refresh()}};\n$('#rtClr').onclick=function(){S.strokes=[];S.cur=null;redraw();refresh()};\nR.querySelectorAll('[data-m]').forEach(function(b){b.onclick=function(){S.m=b.dataset.m;R.querySelectorAll('[data-m]').forEach(function(x){x.classList.toggle('on',x===b)});pv.hidden=S.m!=='type';pad.hidden=$('#rtClr').hidden=S.m!=='draw';refresh()}});\nnm.oninput=function(){pv.textContent=nm.value;refresh()};\n$('#rtNote').oninput=function(){$('#rtCnt').textContent=this.value.length+'/150'};\n/* validation */\nfunction validate(){if(!T('url'))return 'Configuration error: submission endpoint missing.';if(!S.g)return 'Please verify your Google account first.';if(S.g.exp*1000<Date.now())return 'Your Google verification has expired. Please verify again.';if(R.querySelectorAll('#rtChecks input:checked').length<ITEMS.length)return 'Please tick every acknowledgement.';if(nm.value.trim().length<3)return 'Please type your full name.';if(S.m==='draw'&&!S.strokes.length)return 'Please draw your signature.';return ''}\nfunction refresh(){$('#rtGo').classList.toggle('rt-off',!!validate())}\n/* overlay */\nfunction ov(t,s,sp,btns){$('#rtOv').hidden=!t;$('#rtOt').textContent=t||'';$('#rtOs').textContent=s||'';$('#rtSp').hidden=!sp;var b=$('#rtOb');b.innerHTML='';(btns||[]).forEach(function(x){var e=document.createElement('button');e.type='button';e.className='rt-b';e.textContent=x[0];e.onclick=x[1];b.appendChild(e)})}\n/* PNG */\nfunction wrap(c,t,w){var o=[];String(t).split('\\n').forEach(function(p){var ln='';p.split(' ').forEach(function(wd){while(c.measureText(wd).width>w){var i=wd.length;while(i>1&&c.measureText(wd.slice(0,i)).width>w)i--;if(ln){o.push(ln);ln=''}o.push(wd.slice(0,i));wd=wd.slice(i)}var t2=ln?ln+' '+wd:wd;if(c.measureText(t2).width>w&&ln){o.push(ln);ln=wd}else ln=t2});o.push(ln)});return o}\nfunction paint(c,H,d){var W=1240,M=90,IW=W-2*M,y=M,INK='#1b1b1f',GR='#5a5a63',RL='#c9c7bf',BL='#1a5fd0',F='Georgia,\"Times New Roman\",serif';\nc.fillStyle='#f7f6f2';c.fillRect(0,0,W,H);\nc.save();c.fillStyle='#ffffff';c.font='28px '+F;c.rotate(-.35);for(var yy=-400,r=0;yy<H+1000;yy+=170,r++)for(var xx=-700;xx<W+300;xx+=460)c.fillText(d.hidden+' \\u00B7 '+d.cid,xx+(r%2?230:0),yy);c.restore();\nfunction tx(t,x,f,col,lh,w){c.font=f;c.fillStyle=col;wrap(c,t,w).forEach(function(l){c.fillText(l,x,y);y+=lh})}\nfunction hd(t){y+=26;c.font='bold 20px '+F;c.fillStyle=INK;c.letterSpacing='3px';c.fillText(t,M,y);c.letterSpacing='0px';y+=16;c.fillRect(M,y,IW,1.5);y+=36}\nc.fillStyle=INK;c.fillRect(M,y,IW,3);y+=44;c.font='600 20px '+F;c.fillStyle=GR;c.letterSpacing='4px';c.fillText('SERVICE AGREEMENT',M,y);c.letterSpacing='0px';y+=58;\ntx(d.title,M,'bold 44px '+F,INK,54,IW);y+=4;tx('Contract ID: '+d.cid,M,'22px \"Courier New\",monospace',GR,30,IW);y+=14;c.fillStyle=RL;c.fillRect(M,y,IW,1.5);y+=44;\n[['Project',d.project],['Client',d.client],['Developer',d.dev],['Delivery date',d.delivery],['Payment deadline',d.pay],['Description',d.desc]].forEach(function(r){c.font='20px '+F;c.fillStyle=GR;c.fillText(r[0],M,y);tx(r[1]||'-',M+260,'26px '+F,INK,36,IW-260);y+=14});\nhd('AGREEMENT SUMMARY');tx(d.summary,M,'24px '+F,INK,38,IW);\nhd('ACKNOWLEDGEMENTS');ITEMS.forEach(function(it){c.strokeStyle=INK;c.lineWidth=2;c.strokeRect(M,y-22,26,26);c.beginPath();c.moveTo(M+5,y-9);c.lineTo(M+11,y-2);c.lineTo(M+22,y-18);c.lineWidth=3;c.stroke();tx(it[1],M+50,'22px '+F,INK,33,IW-50);y+=14});\nhd('FULL TERMS AND CONDITIONS');tx('The complete terms and conditions are published at:',M,'22px '+F,GR,34,IW);c.font='22px '+F;c.fillStyle=BL;wrap(c,d.policy,IW).forEach(function(l){c.fillText(l,M,y);c.fillRect(M,y+4,c.measureText(l).width,1.5);y+=34});\nhd('EXECUTION');var top=y,bw=560,bh=168;\nif(d.sig==='draw'){c.save();c.translate(M,top);c.scale(bw/600,bh/180);c.strokeStyle='#111';c.lineWidth=2.6;c.lineCap='round';c.lineJoin='round';c.stroke(new Path2D(d.path));c.restore()}\nelse{var fs=62,sf=function(){return 'italic '+fs+'px \"Segoe Script\",\"Brush Script MT\",\"Snell Roundhand\",cursive'};c.font=sf();while(c.measureText(d.name).width>bw-30&&fs>20){fs-=2;c.font=sf()}c.fillStyle='#111';c.textAlign='center';c.fillText(d.name,M+bw/2,top+bh-46);c.textAlign='left'}\nc.fillStyle=INK;c.fillRect(M,top+bh,bw,2);c.font='18px '+F;c.fillStyle=GR;c.fillText('Signature',M,top+bh+30);\nvar ry=top-8,rx=M+620;[['Signed by',d.name],['Verified Google account',d.email],['Date and time',d.when]].forEach(function(r){c.font='18px '+F;c.fillStyle=GR;c.fillText(r[0],rx,ry+14);y=ry+46;tx(r[1],rx,'24px '+F,INK,32,IW-620);ry=y+8});\ny=Math.max(top+bh+30,ry)+50;tx('Electronically signed and identity-verified through Google Sign-In. Reference '+d.cid+(d.hash?' \\u00B7 '+d.hash.slice(0,16):'')+'. Generated automatically upon confirmation.',M,'18px '+F,GR,28,IW);\ny+=16;c.fillStyle=INK;c.fillRect(M,y,IW,3);return y+M}\nfunction png(d){var t=document.createElement('canvas');t.width=1240;t.height=9000;var H=paint(t.getContext('2d'),9000,d),cv=document.createElement('canvas');cv.width=1240;cv.height=H;paint(cv.getContext('2d'),H,d);return new Promise(function(ok,no){cv.toBlob(function(b){b?ok(b):no(new Error('png'))},'image/png')})}\nfunction save(){if(!S.blob)return;var a=document.createElement('a'),u=URL.createObjectURL(S.blob);a.href=u;a.download='Contract-'+CID+'.png';R.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)}\n/* send */\nwindow.addEventListener('message',function(ev){if(!S.wait)return;try{if(!/(^|\\.)(googleusercontent|google)\\.com$/.test(new URL(ev.origin).hostname))return;var m=JSON.parse(ev.data);if(m&&m.rtStatus&&m.id===S.wait.id)S.wait.res(m)}catch(e){}});\nfunction send(data){return new Promise(function(res){var fr=document.createElement('iframe'),f=document.createElement('form'),done=false;fr.name='rtF'+Date.now();fr.hidden=true;R.appendChild(fr);f.method='POST';f.action=T('url');f.target=fr.name;f.hidden=true;[['credential',S.cred],['data',JSON.stringify(data)]].forEach(function(x){var i=document.createElement('input');i.type='hidden';i.name=x[0];i.value=x[1];f.appendChild(i)});R.appendChild(f);\nvar fin=function(m){if(done)return;done=true;S.wait=null;f.remove();fr.remove();res(m)};S.wait={id:data.contract_id,res:fin};setTimeout(function(){fin({rtStatus:'timeout'})},25000);f.submit()})}\nfunction push(){ov('Securely recording your signature\\u2026','Please keep this page open.',true);send(S.last).then(function(m){if(m.rtStatus==='ok'){ov();$('#rtForm').hidden=true;$('#rtDone').hidden=false;S.busy=false}else ov(m.rtStatus==='error'?(m.msg||'Your signature could not be verified.'):'We could not confirm that your signature was recorded.','Your contract copy was downloaded. You can retry, and the same contract ID will not be duplicated.',false,[['Retry',push],['Download copy again',save],['Close',function(){ov();S.busy=false}]])})}\n$('#rtAgain').onclick=save;\n$('#rtGo').onclick=function(){var m=validate();err(m);if(m||S.busy)return;S.busy=true;ov('Preparing your contract\\u2026','Generating your signed document.',true);\nvar now=new Date(),g=S.g,nt=$('#rtNote').value.trim(),tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone}catch(e){}\nvar d={cid:CID,title:T('title'),project:T('project'),client:T('client'),dev:T('dev'),delivery:T('delivery'),pay:T('pay'),desc:T('desc'),summary:T('summary'),policy:T('policy'),hidden:T('hidden'),name:nm.value.trim(),email:g.email,sig:S.m,path:dOf(S.strokes),when:now.toLocaleString('en-GB',{dateStyle:'long',timeStyle:'medium'})+(tz?' ('+tz+')':''),hash:''};\nvar h=window.crypto&&crypto.subtle?crypto.subtle.digest('SHA-256',new TextEncoder().encode(d.summary+'\\n'+T('terms'))).then(function(b){return Array.from(new Uint8Array(b),function(x){return p2(x.toString(16))}).join('')}).catch(function(){return ''}):Promise.resolve('');\nh.then(function(hs){d.hash=hs;return png(d)}).then(function(b){S.blob=b;save();\nvar o={contract_id:CID,timestamp_utc:now.toISOString(),timezone:tz,project:d.project,client_name_in_contract:d.client,developer:d.dev,delivery_date:d.delivery,payment_deadline:d.pay,google_email:g.email,google_name:g.name||'',google_sub:g.sub||'',signed_name:d.name,signature_method:S.m,signature_svg:S.m==='draw'?'<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 180\"><path d=\"'+d.path+'\" fill=\"none\" stroke=\"#111\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>':'',note:nt,contract_hash:hs_(d.hash),seconds_to_sign:Math.round((Date.now()-S.t0)/1000),user_agent:navigator.userAgent,platform:navigator.platform||'',language:navigator.language,languages:(navigator.languages||[]).join(','),screen:screen.width+'x'+screen.height,viewport:innerWidth+'x'+innerHeight,pixel_ratio:devicePixelRatio,touch_points:navigator.maxTouchPoints||0,page_url:location.href,referrer:document.referrer};\nITEMS.forEach(function(it){o[it[0]]='Yes'});S.last=o;push()}).catch(function(){ov('Something went wrong while preparing your document.','Please try again.',false,[['Close',function(){ov();S.busy=false}]])})};\nfunction hs_(x){return x||''}\nrefresh();\n})();\n</script>\n</div>",
+          "libraryRefId": null,
+          "hiddenImages": [],
+          "controls": [
+            {
+              "id": "ctlmuszmg9q0zk",
+              "token": "HEADING",
+              "label": "Heading",
+              "type": "text",
+              "value": "Service Agreement & Acceptance",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q1m2",
+              "token": "PROJECT_NAME",
+              "label": "Project name",
+              "type": "text",
+              "value": "Project name",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q22j",
+              "token": "CLIENT_NAME",
+              "label": "Client name",
+              "type": "text",
+              "value": "Client full name",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q3fn",
+              "token": "DEVELOPER_NAME",
+              "label": "Developer name",
+              "type": "text",
+              "value": "Rahat",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q4uf",
+              "token": "PROJECT_DESC",
+              "label": "Project description",
+              "type": "longtext",
+              "value": "A website that serves as a professional platform between the Client and the Client's customers, with a review system, live order status and a management site.",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q5h4",
+              "token": "DELIVERY_DATE",
+              "label": "Delivery date",
+              "type": "text",
+              "value": "On delivery",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q65u",
+              "token": "PAYMENT_DEADLINE",
+              "label": "Payment deadline text",
+              "type": "text",
+              "value": "Within 3 days of signing",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q7eo",
+              "token": "SUMMARY",
+              "label": "Contract summary",
+              "type": "longtext",
+              "value": "This Agreement is made between the Developer and the Client named above in respect of the project described herein. By signing, the Client confirms that the Client has reviewed and tested the delivered project in full and accepts it as working and complete. From the moment of signing, responsibility for the project, including any matter not covered by the Covered Services section of the Full Terms, rests with the Client. The Developer is not liable for any matter arising after acceptance that falls outside the promised services. The Client shall pay the agreed fee within three (3) days of signing; failure to do so may result in permanent suspension of the service. Lifetime customer support, as defined in the Full Terms, is available to the Client upon payment.",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q87s",
+              "token": "TERMS",
+              "label": "Full terms (blank line between sections, first line = title)",
+              "type": "longtext",
+              "value": "1. Project Scope\nThe Developer builds a website that serves as a professional platform and bridge between the Client and the Client's own customers. Customers can view the Client's offers and submit their details, which are delivered securely to the Client, and the Client manages the website through the management site. The Client markets the website and personally performs all payment verification and fulfilment of orders. The service includes a review system and a live order status system.\n\n2. Client Testing & Acceptance\nBy signing, the Client confirms that the Client has tested every feature of the delivered project and that it works. Any issue discovered later that falls outside the promised services is the Client's responsibility, as it should have been identified during testing.\n\n3. Data & Privacy\nThe Developer does not store, sell, share or manage the Client's data or the Client's customers' data. The Client's Google account is used solely to verify identity and to set up the Client's website and its connected Google Sheet.\n\n4. Developer Responsibility\nAfter signing, the Developer is responsible only for providing future updates and advice, and for fixing defects in the Covered Services (Section 5). Future updates are chargeable; customer support is free (Section 8).\n\n5. Covered Services\nThe Developer is responsible for defects in: website functionality within the agreed scope; the front page; the review system; live order status; verification; the Client's customer verification; the data flow from the website to the Client's management Google Sheet; and any other functionality expressly promised. If these work as promised, the Developer has no further responsibility.\n\n6. Excluded Services\nThe Developer is not responsible for: any feature that was never promised; automatic payment processing (unless provided); automatic game-currency or item delivery; automatic currency exchange; problems caused by the Client's own modifications or misuse; new requirements; third-party or API changes; or anything the Client expected that was never part of the service. A customer entering game credentials does not trigger any automatic delivery by the website.\n\n7. Future Bugs & Maintenance\nBugs discovered after acceptance that are not within the Covered Services are the Client's responsibility. To have such issues fixed, the Client must engage the Developer as a new client under a new agreement.\n\n8. Customer Support\nThe Developer provides free customer support for the delivered project for the lifetime of the Developer's business, application and platform. If the business or the personal brand ceases to exist, support ends. Support covers the delivered project only; new features and modifications are chargeable.\n\n9. Changes & Modifications\nThe Developer will help with modifications during the first three (3) days after signing. After that period, all changes and any consequences of them are the Client's responsibility.\n\n10. Hosting, Domain & API Costs\nThe project currently requires no hosting cost. A custom domain is optional and at the Client's expense; the Developer can connect it. There are currently no API costs, but any that arise in future are payable by the Client.\n\n11. Payment Obligations\nThe agreed fee must be paid within three (3) days of signing. The Client may pay in advance or at any time within that period. Paid clients receive lifetime customer support as described in Section 8. The price is as separately agreed between the parties and is not stated in this document.\n\n12. Service Suspension\nIf payment is not received within three (3) days of signing, the Developer may permanently disable the Client's website.\n\n13. Refunds\nA refund, or a free fix, is given only where a service expressly described in this document is found not to work. Matters not covered by this document, and issues the Client should have identified during testing, are not eligible for a refund.\n\n14. Ownership\nOwnership of the finished project passes to the Client three (3) days after signing, and the Client may then edit and modify it.\n\n15. Limitation of Liability\nThe Developer's liability is limited to fixing, free of charge, any major defect in a service this document states the project provides. New issues that the Client did not test or anticipate are the Client's responsibility.\n\n16. Electronic Signature & Verification\nThe Client's identity is verified through Google Sign-In. The Client's typed name and chosen signature (typed or drawn), together with the date, time and device details, form the Client's electronic signature. The Client's optional note is informational only and does not alter this Agreement.\n\n17. Governing Law\nThis Agreement is governed by the laws of the People's Republic of Bangladesh.\n\n18. Acceptance\nBy signing, the Client accepts this document in full, including all rules and terms, and the policy at the link provided.",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q9ml",
+              "token": "POLICY_URL",
+              "label": "Full policy URL",
+              "type": "url",
+              "value": "https://example.com/policy",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q10ze",
+              "token": "GOOGLE_CLIENT_ID",
+              "label": "Google OAuth Client ID",
+              "type": "text",
+              "value": "583545653555-qc48sfb9402lbn94sd686mrdipddb2kk.apps.googleusercontent.com",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q112t",
+              "token": "SCRIPT_URL",
+              "label": "Apps Script Web App URL (ends in /exec)",
+              "type": "url",
+              "value": "https://script.google.com/macros/s/AKfycbzcsoU0lC0F1GSmLWq48t0yePgBkNrBlj_SVl0QjYXjyXDOSNJNxql0UMrCUncRlmVikQ/exec",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q12tk",
+              "token": "ID_PREFIX",
+              "label": "Contract ID prefix",
+              "type": "text",
+              "value": "RHT",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q13d1",
+              "token": "HIDDEN_TEXT",
+              "label": "Hidden anti-fakery text (faint in PNG)",
+              "type": "text",
+              "value": "RAHAT-ORIGINAL-DOC",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            {
+              "id": "ctlmuszmg9q14sm",
+              "token": "BUTTON_LABEL",
+              "label": "Confirm button label",
+              "type": "text",
+              "value": "Confirm & Sign",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            }
+          ]
         }
       ],
       "seo": {}
@@ -180,6 +343,8 @@
   "github": {
     "owner": "monilaila",
     "repo": "Rahat101",
-    "branch": "main"
+    "branch": "main",
+    "lastSyncStatus": "success",
+    "syncedAt": 1791067822500
   }
 }

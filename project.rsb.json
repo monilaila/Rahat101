@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789419635481,
-  "lastSaved": 1791233185942,
+  "lastSaved": 1791233327204,
   "theme": {
     "id": "2d4f6e38-51d9-4529-b1ab-3ad6f40c86f1",
     "type": "theme",
@@ -258,6 +258,18 @@
               "step": 1
             }
           ]
+        },
+        {
+          "id": "e3329457-4a55-48bf-a9ef-d11f6f49310b",
+          "type": "rich_text",
+          "version": 1,
+          "title": "Title Here",
+          "titleAlign": "center",
+          "subtitle": "A short subtitle",
+          "paragraphs": [
+            "Your opening paragraph here. The first letter becomes a drop cap.",
+            "Second paragraph."
+          ]
         }
       ],
       "seo": {}
@@ -312,7 +324,7 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1791232851787,
-    "pruneOnNextSync": true
+    "syncedAt": 1791233200883,
+    "pruneOnNextSync": false
   }
 }

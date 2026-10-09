@@ -8,7 +8,7 @@
     "library": 1
   },
   "createdAt": 1789419635481,
-  "lastSaved": 1791546608512,
+  "lastSaved": 1791547911863,
   "theme": {
     "id": "2d4f6e38-51d9-4529-b1ab-3ad6f40c86f1",
     "type": "theme",
@@ -285,8 +285,8 @@
           "showAvatar": true,
           "showAge": true,
           "showRefresh": true,
-          "starColor": "",
-          "align": "left",
+          "starColor": "#ffffff",
+          "align": "center",
           "texts": {}
         },
         {
@@ -442,9 +442,9 @@
     "repo": "Rahat101",
     "branch": "main",
     "lastSyncStatus": "success",
-    "syncedAt": 1791544877566,
+    "syncedAt": 1791546629970,
     "pruneOnNextSync": false,
-    "syncedFingerprint": "aoqstf_40262"
+    "syncedFingerprint": "179p0t7_41210"
   },
   "google": {
     "clientId": "583545653555-qc48sfb9402lbn94sd686mrdipddb2kk.apps.googleusercontent.com",

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Tracer</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
+#stage{position:fixed;inset:0;touch-action:none}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#img{position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none;display:none;will-change:transform}
+#bar{position:fixed;left:0;right:0;bottom:0;padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:grid;grid-template-columns:auto 1fr;gap:12px 14px;align-items:center}
+label{font-size:13px;opacity:.85}
+input[type=range]{width:100%;height:32px;accent-color:#fff}
+.row{grid-column:1/-1;display:flex;gap:10px}
+button{flex:1;height:48px;border:0;border-radius:12px;background:#fff;color:#000;font-size:16px;font-weight:600}
+button.off{background:#333;color:#fff}
+#bar.min>*:not(#tog){display:none}
+#bar.min{grid-template-columns:1fr;padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+#tog{grid-column:1/-1;height:28px;background:transparent;color:#fff;font-size:20px;line-height:1;padding:0}
+#find{grid-column:1/-1;display:none;gap:8px;flex-wrap:wrap}
+#pick{width:100%;height:48px;border:0;border-radius:12px;padding:0 10px;font-size:16px;background:#fff;color:#000}
+#find.open{display:flex}
+#find input{flex:1;height:48px;border:0;border-radius:12px;padding:0 12px;font-size:16px;min-width:0}
+#find button{flex:0 0 90px}
+#save{position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;flex:none;height:40px;padding:0 16px;border-radius:20px;font-size:15px}
+#save:disabled{opacity:.4}
+#err{position:fixed;top:22%;left:0;right:0;text-align:center;padding:0 28px;display:none;font-size:15px}
+#err button{margin-top:14px;width:220px}
+#msg{position:fixed;top:40%;left:0;right:0;text-align:center;padding:0 30px;font-size:15px;opacity:.9;pointer-events:none}
+</style></head><body>
+<div id="stage"><video id="cam" autoplay playsinline muted></video><canvas id="img"></canvas></div>
+<button id="save" disabled>Save</button>
+<div id="err"><div id="errt"></div><button id="camb">Enable camera</button></div>
+<div id="msg">Tap “Add image” to begin</div>
+<div id="bar">
+ <button id="tog" aria-label="Hide controls">▾</button>
+ <label for="sz">Size</label><input id="sz" type="range" min="0.1" max="4" step="0.01" value="1">
+ <label for="op">Opacity</label><input id="op" type="range" min="0.05" max="1" step="0.01" value="0.8">
+ <div id="find"><select id="pick"><option value="">Pick a character…</option><option>Naruto</option><option>Sasuke</option><option>Itachi</option><option>Goku</option><option>Vegeta</option><option>Luffy</option><option>Zoro</option><option>Gojo Satoru</option><option>Tanjiro</option><option>Nezuko</option><option>Eren Yeager</option><option>Levi Ackerman</option><option>Saitama</option><option>Deku</option><option>Light Yagami</option><option>Edward Elric</option><option>Sailor Moon</option><option>Pikachu</option><option>Doraemon</option><option>Spike Spiegel</option></select><input id="q" placeholder="e.g. Naruto, Goku, Zoro" enterkeyhint="search"><button id="go">Search</button></div>
+ <div class="row"><button id="add">Add image</button><button id="fbtn" class="off">Find</button><button id="lock" class="off">Lock: off</button></div>
+</div>
+<input id="file" type="file" accept="image/*" hidden>
+<script>
+const $=id=>document.getElementById(id);
+const cam=$('cam'),cv=$('img'),stage=$('stage'),sz=$('sz'),op=$('op'),msg=$('msg');
+let x=0,y=0,s=1,locked=false,has=false;
+
+// Camera (rear, portrait)
+async function startCam(){
+ const err=$('err'),t=$('errt');err.style.display='none';
+ if(!window.isSecureContext||!navigator.mediaDevices){
+  t.textContent='The camera only works from a secure https link. Open the hosted app link in Chrome, not a downloaded file.';
+  $('camb').style.display='none';err.style.display='block';return}
+ $('camb').style.display='';
+ try{
+  const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+  cam.srcObject=st;
+ }catch(e){
+  t.textContent=e.name==='NotAllowedError'
+   ?'Camera is blocked. Tap the lock icon next to the address, choose Permissions, set Camera to Allow, then tap the button.'
+   :'Camera could not start ('+e.name+').';
+  err.style.display='block'}
+}
+$('camb').onclick=startCam;startCam();
+try{navigator.wakeLock&&navigator.wakeLock.request('screen')}catch(e){}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+
+// Storage (IndexedDB) so nothing is lost
+let blobNow=null;
+const db=new Promise(r=>{const q=indexedDB.open('tracer',1);q.onupgradeneeded=()=>q.result.createObjectStore('k');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)});
+async function dbSet(v){const d=await db;if(!d)return false;return new Promise(r=>{const t=d.transaction('k','readwrite');t.objectStore('k').put(v,'last');t.oncomplete=()=>r(true);t.onerror=()=>r(false)})}
+async function dbGet(){const d=await db;if(!d)return null;return new Promise(r=>{const q=d.transaction('k').objectStore('k').get('last');q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)})}
+async function save(){if(!blobNow)return false;return dbSet({blob:blobNow,x,y,s,op:+op.value})}
+let tm;function autosave(){clearTimeout(tm);tm=setTimeout(save,800)}
+$('save').onclick=async()=>{const b=$('save'),ok=await save();b.textContent=ok?'Saved ✓':'Save failed';setTimeout(()=>b.textContent='Save',1500)};
+
+// Load image, make white transparent, keep black lines
+$('add').onclick=()=>$('file').click();
+$('file').onchange=e=>{const f=e.target.files[0];if(f)loadBlob(f)};
+function loadBlob(blob,st){
+ const im=new Image();
+ im.onload=()=>{
+  const k=Math.min(1,1600/Math.max(im.width,im.height));
+  cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);
+  const c=cv.getContext('2d');c.drawImage(im,0,0,cv.width,cv.height);
+  const d=c.getImageData(0,0,cv.width,cv.height),p=d.data;
+  for(let i=0;i<p.length;i+=4){
+   const l=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];
+   p[i]=p[i+1]=p[i+2]=0;
+   p[i+3]=Math.max(0,Math.min(255,(255-l-20)*1.15))*(p[i+3]/255);
+  }
+  c.putImageData(d,0,0);
+  cv.style.display='block';msg.style.display='none';has=true;blobNow=blob;$('save').disabled=false;
+  if(st){x=st.x;y=st.y;s=st.s;op.value=st.op}
+  else{s=Math.min(innerWidth/cv.width,innerHeight*0.7/cv.height);
+   x=(innerWidth-cv.width*s)/2;y=(innerHeight*0.7-cv.height*s)/2}
+  sz.value=Math.min(4,Math.max(0.1,s));apply();if(!st)save();
+ };
+ im.src=URL.createObjectURL(blob);
+}
+dbGet().then(v=>{if(v&&v.blob)loadBlob(v.blob,v)});
+function apply(){autosave();cv.style.transform=`translate(${x}px,${y}px) scale(${s})`;cv.style.opacity=op.value}
+sz.oninput=()=>{ // scale around screen center of image area
+ const ns=+sz.value,cx=innerWidth/2,cy=innerHeight/2;
+ x=cx-(cx-x)*ns/s;y=cy-(cy-y)*ns/s;s=ns;apply()};
+op.oninput=apply;
+$('lock').onclick=e=>{locked=!locked;e.target.textContent='Lock: '+(locked?'on':'off');e.target.classList.toggle('off',!locked)};
+
+// Collapse controls
+$('tog').onclick=()=>{const m=$('bar').classList.toggle('min');$('tog').textContent=m?'▴':'▾'};
+// Image search (opens results; save an image, then use Add image)
+$('fbtn').onclick=()=>$('find').classList.toggle('open');
+function search(){const q=$('q').value.trim();if(!q)return;
+ window.open('https://www.google.com/search?tbm=isch&q='+encodeURIComponent(q+' line art black and white outline coloring page'),'_blank')}
+$('pick').onchange=e=>{if(e.target.value){$('q').value=e.target.value;search();e.target.selectedIndex=0}};
+$('go').onclick=search;$('q').onkeydown=e=>{if(e.key==='Enter')search()};
+// Gestures: 1 finger = move, 2 fingers = move + pinch
+const P=new Map();let last=null;
+function metrics(){const a=[...P.values()];
+ const mx=a.reduce((t,q)=>t+q.x,0)/a.length,my=a.reduce((t,q)=>t+q.y,0)/a.length;
+ const dist=a.length>1?Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y):0;return{mx,my,dist}}
+stage.addEventListener('pointerdown',e=>{if(!has||locked)return;stage.setPointerCapture(e.pointerId);P.set(e.pointerId,{x:e.clientX,y:e.clientY});last=metrics()});
+stage.addEventListener('pointermove',e=>{
+ if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ const m=metrics();
+ if(last){x+=m.mx-last.mx;y+=m.my-last.my;
+  if(P.size>1&&last.dist>0){const ns=Math.min(4,Math.max(0.1,s*m.dist/last.dist));
+   x=m.mx-(m.mx-x)*ns/s;y=m.my-(m.my-y)*ns/s;s=ns;sz.value=s}}
+ last=m;apply()});
+['pointerup','pointercancel'].forEach(t=>stage.addEventListener(t,e=>{P.delete(e.pointerId);last=P.size?metrics():null}));
+document.addEventListener('gesturestart',e=>e.preventDefault());
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+</script></body></html>
